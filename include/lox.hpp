@@ -1,5 +1,5 @@
-#ifndef LOXPP_SRX_LOX_H_
-#define LOXPP_SRX_LOX_H_
+#ifndef LOXPP_SRC_LOX_H_
+#define LOXPP_SRC_LOX_H_
 
 #include <string>
 
