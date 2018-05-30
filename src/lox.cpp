@@ -13,13 +13,17 @@ void Lox::runFile(char *path) {
   src_buffer << file.rdbuf();
 
   run(src_buffer.str());
+
+  if (hadError) exit(65);  // data format error
 }
 
 void Lox::runPrompt() {
   std::string curr_line;
 
   while (true) {
+    hadError = false;  // reset error status
     getline(std::cin, curr_line);
+    
     std::cout << "> ";
     run(curr_line);
   }
