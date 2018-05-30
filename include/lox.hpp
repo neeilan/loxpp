@@ -5,9 +5,17 @@
 
 class Lox {
 public:
-  void runFile(char *path);
-  void runPrompt();
-  void run(std::string source);
+  static void runFile(char *path);
+  static void runPrompt();
+  static void run(std::string source);
+  static void error(int line, std::string message);
+
+private:
+  static bool hadError;
+  static void report(int line,
+                     std::string occurrence,
+                     std::string message);
+
 };
 
 #endif

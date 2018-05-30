@@ -17,6 +17,7 @@ void Lox::runFile(char *path) {
 
 void Lox::runPrompt() {
   std::string curr_line;
+
   while (true) {
     getline(std::cin, curr_line);
     std::cout << "> ";
@@ -28,3 +29,18 @@ void Lox::run (std::string source) {
   std::cout << source << std::endl;
 }
 
+void Lox::error(int line, std::string message) {
+  report(line, "", message);
+}
+
+// Private
+bool Lox::hadError = false;
+
+void Lox::report(int line,
+                 std::string occurrence,
+                 std::string message) {
+  std::cout << "[line " << line << "] Error: "
+    << occurrence  << " : " << message;
+
+  hadError = true;
+}
