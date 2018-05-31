@@ -91,17 +91,13 @@ bool Scanner::match(char expected) {
   return true;
 }
 
-/*
+// Stubs, so the code compiles
+bool Scanner::is_alpha(char c) { return true; }
+bool Scanner::is_alphanumeric(char c) { return true; }
+bool Scanner::is_digit(char c) { return true; }
+char Scanner::peek() { return 'a'; }
+char Scanner::peek_next() { return 'a'; }
+void Scanner::string() {}
+void Scanner::number() {}
+void Scanner::identifier() {}
 
-private:
-
-  bool is_alpha(char c);
-  bool is_alphanumeric(char c);
-  bool is_digit(char c);
-  char peek();
-  char peek_next();
-  void string();
-  void number();
-  void identifier();
-
-*/

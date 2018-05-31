@@ -1,9 +1,12 @@
 #include "lox.hpp"
+#include "scanner.hpp"
+#include "token.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 
 void Lox::runFile(char *path) {
@@ -30,7 +33,13 @@ void Lox::runPrompt() {
 }
 
 void Lox::run (std::string source) {
-  std::cout << source << std::endl;
+  Scanner scanner(source);
+  std::vector<Token> tokens = scanner.scan_tokens();
+
+  // Print the tokens for now
+  for (Token token : tokens) {
+    std::cout << token.str();
+  }
 }
 
 void Lox::error(int line, std::string message) {

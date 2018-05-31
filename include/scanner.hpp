@@ -10,6 +10,7 @@
 class Scanner {
 public:
   Scanner(std::string source);
+  std::vector<Token> scan_tokens();
 
 private:
   const std::string source;
@@ -20,7 +21,6 @@ private:
   int current  = 0;
   int line     = 1;
 
-  std::vector<Token> scan_tokens();
   bool is_at_end();
   bool is_alpha(char c);
   bool is_alphanumeric(char c);
