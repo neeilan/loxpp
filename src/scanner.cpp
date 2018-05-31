@@ -160,7 +160,12 @@ char Scanner::peek_next() {
 
 void Scanner::identifier() {
   while (is_alphanumeric(peek())) advance();
-  add_token(IDENTIFIER);
+
+  // See if the identifier is a reserved word.
+  std::string text = source.substr(start, current - start);
+
+  TokenType type = keywords.count(text) ? keywords.at(text) : IDENTIFIER;
+  add_token(type);
 }
 
 bool Scanner::is_alpha(char c) {

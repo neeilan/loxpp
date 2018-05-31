@@ -28,7 +28,7 @@ class Token {
 public:
   const TokenType type;
   const std::string lexeme;
-  const void *literal;
+  const void *literal;  // TODO: look into std::optional here
   const int line; 
 
   Token(TokenType type,
