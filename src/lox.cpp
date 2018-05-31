@@ -9,7 +9,7 @@
 #include <vector>
 
 
-void Lox::runFile(char *path) {
+void Lox::run_file(char *path) {
   std::ifstream file(path);
   std::stringstream src_buffer;
 
@@ -20,7 +20,7 @@ void Lox::runFile(char *path) {
   if (hadError) exit(65);  // data format error
 }
 
-void Lox::runPrompt() {
+void Lox::run_prompt() {
   std::string curr_line;
 
   while (true) {

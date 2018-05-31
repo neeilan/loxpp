@@ -12,8 +12,8 @@ int main(int argc, char **argv) {
   Lox interpreter;
 
   if (argc == 2) {
-    interpreter.runFile(argv[1]);
+    interpreter.run_file(argv[1]);
   } else {
-    interpreter.runPrompt();
+    interpreter.run_prompt();
   }
 }

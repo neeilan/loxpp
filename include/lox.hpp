@@ -5,8 +5,8 @@
 
 class Lox {
 public:
-  static void runFile(char *path);
-  static void runPrompt();
+  static void run_file(char *path);
+  static void run_prompt();
   static void run(std::string source);
   static void error(int line, std::string message);
 
