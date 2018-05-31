@@ -77,6 +77,7 @@ void Scanner::scan_token() {
     case '\n':
       line++;
       break;
+    case '"': string(); break;  // string literals
     default:
       if (is_digit(c)) {
         number();
