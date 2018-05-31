@@ -13,12 +13,12 @@ public:
 
 private:
   const std::string source;
-  const std::vector<Token> tokens;
+  std::vector<Token> tokens;
   static const std::map<std::string, TokenType> keywords;
 
-  int start;
-  int current;
-  int line;
+  int start    = 0;
+  int current  = 0;
+  int line     = 1;
 
   std::vector<Token> scan_tokens();
   bool is_at_end();
@@ -31,6 +31,7 @@ private:
   char peek_next();
   void add_token(TokenType type);
   void add_token(TokenType type, void *literal);
+  void scan_token();
   void string();
   void number();
   void identifier();
