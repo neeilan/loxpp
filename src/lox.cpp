@@ -29,6 +29,7 @@ void Lox::runPrompt() {
     
     std::cout << "> ";
     run(curr_line);
+    std::cout << std::endl;
   }
 }
 
