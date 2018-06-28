@@ -9,46 +9,51 @@ class Expr {
 };
 
 
-class Binary: public Expr {
+class Binary : public Expr {
 public:
-  Binary(Expr left, Token operator, Expr right)
-    : left(left), operator(operator), right(right) {}
+    Binary(Expr left, Token operator, Expr right)
+            : left(left), operator(
+
+    operator), right(right) {}
 
 private:
-  const Expr left;
-  const Token operator;
-  const Expr right;
+    const Expr left;
+    const Token operator;
+    const Expr right;
 };
 
 
-class Grouping: public Expr {
+class Grouping : public Expr {
 public:
-  Grouping(Expr expression) : expression(expression) {}
+    Grouping(Expr expression) : expression(expression) {}
 
 private:
-  Expr expression;
+    Expr expression;
 };
 
 
-class Literal: public Expr {
+class Literal : public Expr {
 public:
-  Literal(std::string value) : str_value(value) {}
-  Literal(double value) : num_value(value) {}
+    Literal(std::string value) : str_value(value) {}
+
+    Literal(double value) : num_value(value) {}
 
 private:
-  std::string str_value = NULL;
-  double num_value = NULL;
+    std::string str_value = NULL;
+    double num_value = NULL;
 };
 
 
-class Unary: public Expr {
+class Unary : public Expr {
 public:
-  Unary(Token operator, Expr right)
-    : operator(operator), right(right) {}
+    Unary(Token operator, Expr right)
+            : operator(
+
+    operator), right(right) {}
 
 private:
-  const Token operator;
-  const Expr right;
+    const Token operator;
+    const Expr right;
 };
 
 #endif

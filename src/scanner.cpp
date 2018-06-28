@@ -98,7 +98,7 @@ void Scanner::add_token(TokenType type) {
   add_token(type, NULL);
 }
 
-void Scanner::add_token(TokenType type, void *literal) {
+void Scanner::add_token(TokenType type, std::string literal) {
   std::string text = source.substr(start, current - start);
   tokens.push_back(Token(type, text, literal, line));
 }
@@ -134,7 +134,7 @@ void Scanner::string() {
   // Trim the surrounding quotes.
   int str_start = start + 1;
   std::string value = source.substr(str_start, current - 1 - str_start);
-  add_token(STRING, &value); // is this safe?
+  add_token(STRING, value);
 }
 
 bool Scanner::is_digit(char c) {
@@ -150,8 +150,8 @@ void Scanner::number() {
     while (is_digit(peek())) advance();
   }
 
-  double value = std::stod(source.substr(start, current - start));
-  add_token(NUMBER, &value);
+  std::string value = source.substr(start, current - start);
+  add_token(NUMBER, value);
 }
 
 char Scanner::peek_next() {
