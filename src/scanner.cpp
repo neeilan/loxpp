@@ -35,7 +35,7 @@ std::vector<Token> Scanner::scan_tokens() {
       scan_token();
     }
 
-    tokens.push_back(Token(END_OF_FILE, "", NULL, line));
+    tokens.push_back(Token(END_OF_FILE, "", "", line));
     return tokens;
 }
 
@@ -43,7 +43,7 @@ std::vector<Token> Scanner::scan_tokens() {
 bool Scanner::is_at_end() {
   return current >= source.length();
 }
-
+#include <iostream>
 void Scanner::scan_token() {
   char c = advance();
 
@@ -95,7 +95,7 @@ char Scanner::advance() {
 }
 
 void Scanner::add_token(TokenType type) {
-  add_token(type, NULL);
+  add_token(type, "");
 }
 
 void Scanner::add_token(TokenType type, std::string literal) {
