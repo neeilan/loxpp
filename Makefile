@@ -22,6 +22,10 @@ clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
 
+# Tools
+generate_ast:
+	$(CC) $(CFLAGS) tools/generate_ast.cpp $(INC) -o bin/generate_ast
+
 # Tests
 tester:
 	$(CC) $(CFLAGS) test/tester.cpp $(INC) -o bin/tester
