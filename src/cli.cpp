@@ -16,4 +16,6 @@ int main(int argc, char **argv) {
     } else {
         interpreter.run_prompt();
     }
+
+    return 0;
 }

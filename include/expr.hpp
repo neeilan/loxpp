@@ -11,14 +11,12 @@ class Expr {
 
 class Binary : public Expr {
 public:
-    Binary(Expr left, Token operator, Expr right)
-            : left(left), operator(
-
-    operator), right(right) {}
+    Binary(Expr left, Token op, Expr right)
+            : left(left), op(op), right(right) {}
 
 private:
     const Expr left;
-    const Token operator;
+    const Token op;
     const Expr right;
 };
 
@@ -39,20 +37,18 @@ public:
     Literal(double value) : num_value(value) {}
 
 private:
-    std::string str_value = NULL;
-    double num_value = NULL;
+    std::string str_value;
+    double num_value;
 };
 
 
 class Unary : public Expr {
 public:
-    Unary(Token operator, Expr right)
-            : operator(
-
-    operator), right(right) {}
+    Unary(Token op, Expr right)
+            : op(op), right(right) {}
 
 private:
-    const Token operator;
+    const Token op;
     const Expr right;
 };
 

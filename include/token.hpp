@@ -31,6 +31,13 @@ public:
     const std::string literal;
     const int line;
 
+    Token(const Token &token) {
+        this->type = token.type;
+        this->lexeme = token.lexeme;
+        this->literal = token.literal;
+        this->line = token.line;
+    }
+
     Token(TokenType type,
           std::string lexeme,
           std::string literal,
