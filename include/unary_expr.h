@@ -1,15 +1,11 @@
-//
-// Created by Neeilan Selvalingam on 7/17/18.
-//
-
 #ifndef LOXPP_UNARYEXPR_H
 #define LOXPP_UNARYEXPR_H
 
 #include "expr.hpp"
 
-class UnaryExpr {
+class unary_expr {
 public:
-    UnaryExpr(Token op, Expr right) : op(op), right(right) {}
+    unary_expr(Token op, Expr right) : op(op), right(right) {}
     Token op;
     Expr right;
 };
