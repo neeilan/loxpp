@@ -21,7 +21,7 @@ static std::vector<std::string> token_names{
 };
 
 
-std::string Token::str() {
+std::string Token::str() const {
     return token_names[type]
            + " "
            + lexeme

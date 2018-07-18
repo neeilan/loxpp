@@ -9,8 +9,8 @@
 #include <vector>
 
 
-void Lox::run_file(char *path) {
-    std::ifstream file(path);
+void Lox::run_file(const char *path) {
+    const std::ifstream file(path);
     std::stringstream src_buffer;
 
     src_buffer << file.rdbuf();
@@ -33,17 +33,17 @@ void Lox::run_prompt() {
     }
 }
 
-void Lox::run(std::string source) {
+void Lox::run(const std::string& source) {
     Scanner scanner(source);
-    std::vector<Token> tokens = scanner.scan_tokens();
+    const std::vector<Token> tokens = scanner.scan_tokens();
 
     // Print the tokens for now
-    for (Token token : tokens) {
+    for (const Token& token : tokens) {
         std::cout << token.str();
     }
 }
 
-void Lox::error(int line, std::string message) {
+void Lox::error(int line, const std::string& message) {
     report(line, "", message);
 }
 
@@ -51,8 +51,8 @@ void Lox::error(int line, std::string message) {
 bool Lox::hadError = false;
 
 void Lox::report(int line,
-                 std::string occurrence,
-                 std::string message) {
+                 const std::string& occurrence,
+                 const std::string& message) {
     std::cout << "[line " << line << "] Error: "
               << occurrence << " : " << message;
 

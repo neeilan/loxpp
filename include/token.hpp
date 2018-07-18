@@ -47,7 +47,7 @@ public:
         this->line = token.line;
     }
 
-    std::string str();
+    std::string str() const;
 };
 
 #endif
