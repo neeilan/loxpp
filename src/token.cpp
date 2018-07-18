@@ -21,15 +21,6 @@ static std::vector<std::string> token_names{
 };
 
 
-Token::Token(TokenType type,
-             std::string lexeme,
-             std::string literal,
-             int line)
-        : type(type),
-          lexeme(lexeme),
-          literal(literal),
-          line(line) {}
-
 std::string Token::str() {
     return token_names[type]
            + " "

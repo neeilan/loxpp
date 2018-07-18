@@ -26,10 +26,19 @@ enum TokenType {
 
 class Token {
 public:
-    const TokenType type;
-    const std::string lexeme;
-    const std::string literal;
-    const int line;
+    TokenType type;
+    std::string lexeme;
+    std::string literal;
+    int line;
+
+    Token(TokenType type,
+          std::string lexeme,
+          std::string literal,
+          int line)
+            : type(type),
+              lexeme(lexeme),
+              literal(literal),
+              line(line) {}
 
     Token(const Token &token) {
         this->type = token.type;
@@ -37,11 +46,6 @@ public:
         this->literal = token.literal;
         this->line = token.line;
     }
-
-    Token(TokenType type,
-          std::string lexeme,
-          std::string literal,
-          int line);
 
     std::string str();
 };
