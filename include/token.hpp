@@ -32,15 +32,15 @@ public:
     int line;
 
     Token(TokenType type,
-          std::string lexeme,
-          std::string literal,
+          const std::string& lexeme,
+          const std::string& literal,
           int line)
             : type(type),
               lexeme(lexeme),
               literal(literal),
               line(line) {}
 
-    Token(const Token &token) {
+    Token(const Token& token) {
         this->type = token.type;
         this->lexeme = token.lexeme;
         this->literal = token.literal;

@@ -26,7 +26,7 @@ const std::map<std::string, TokenType> Scanner::keywords = {
 };
 
 
-Scanner::Scanner(std::string source) : source(source) {}
+Scanner::Scanner(const std::string& source) : source(source) {}
 
 std::vector<Token> Scanner::scan_tokens() {
     while (!is_at_end()) {
