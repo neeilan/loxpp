@@ -22,9 +22,9 @@ std::string AstPrinter::visit(const Unary* expr) {
 }
 
 std::string AstPrinter::parenthesize(std::string name, const Expr& expr) {
-    return std::string(std::string("Unimplemented"));
+    return "(" + name + " " + expr.accept(this) + ")";
 }
 
-std::string AstPrinter::parenthesize(std::string s, const Expr& expr1, const Expr& expr2) {
-    return std::string(std::string("Unimplemented"));
+std::string AstPrinter::parenthesize(std::string name, const Expr& expr1, const Expr& expr2) {
+    return "(" + name + " " + expr1.accept(this) + " " + expr2.accept(this) + ")";
 }
