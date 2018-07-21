@@ -16,10 +16,10 @@ public:
 
 class Binary : public Expr {
 public:
-    Binary(Expr left, Token op, Expr right)
+    Binary(Expr& left, Token op, Expr& right)
             : left(left), op(op), right(right) {}
 
-    std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(*this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
 
     const Expr& left;
     const Token op;
@@ -31,7 +31,7 @@ class Grouping : public Expr {
 public:
     explicit Grouping(Expr& expression) : expression(expression) {}
 
-    std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(*this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
 
     const Expr& expression;
 };
@@ -40,7 +40,7 @@ class Literal : public Expr {
 public:
     explicit Literal(const std::string& value, bool nil = false) : value(value), nil(nil) {}
 
-    std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(*this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
 
     bool nil;
     std::string value;
@@ -52,7 +52,7 @@ public:
     Unary(Token op, Expr& right)
             : op(op), right(right) {}
 
-    std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(*this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
 
     const Token op;
     const Expr& right;

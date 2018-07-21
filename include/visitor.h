@@ -15,11 +15,11 @@ class Unary;
 template <class T>
 class Visitor {
 public:
-    virtual ~Visitor() = 0;
-    virtual T visit(const Unary&) = 0;
-    virtual T visit(const Binary&) = 0;
-    virtual T visit(const Grouping&) = 0;
-    virtual T visit(const Literal&) = 0;
+    virtual ~Visitor() {};
+    virtual T visit(const Unary*) = 0;
+    virtual T visit(const Binary*) = 0;
+    virtual T visit(const Grouping*) = 0;
+    virtual T visit(const Literal*) = 0;
 };
 
 #endif //LOXPP_VISITOR_H

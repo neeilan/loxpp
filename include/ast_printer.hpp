@@ -17,8 +17,8 @@ public:
     std::string visit(const Grouping*);
     std::string visit(const Literal*);
 private:
-    std::string parenthesize(std::string, const Expr&); // todo: change these to variadic template
-    std::string parenthesize(std::string, const Expr&, const Expr&);
+    std::string parenthesize(std::string, const Expr*); // todo: change these to variadic template
+    std::string parenthesize(std::string, const Expr*, const Expr*);
 };
 
 
