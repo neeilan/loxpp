@@ -38,10 +38,11 @@ public:
 
 class Literal : public Expr {
 public:
-    explicit Literal(const std::string& value) : value(value) {}
+    explicit Literal(const std::string& value, bool nil = false) : value(value), nil(nil) {}
 
     std::string accept(Visitor<std::string>* visitor) { return visitor->visit(this); }
 
+    bool nil;
     std::string value;
 };
 
