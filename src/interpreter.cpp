@@ -16,7 +16,6 @@ inline std::string operator_name(TokenType op) {
 }
 
 
-
 void Interpreter::interpret(const Expr &expr) {
     try {
         InterpreterResult value = evaluate(expr);
@@ -26,6 +25,11 @@ void Interpreter::interpret(const Expr &expr) {
         Lox::runtime_error(err);
 
     }
+}
+
+
+InterpreterResult Interpreter::evaluate(const Expr &expr) {
+    return expr.accept(this);
 }
 
 
@@ -112,10 +116,17 @@ InterpreterResult Interpreter::visit(const Binary* expr) {
 
 }
 
-InterpreterResult Interpreter::visit(const Literal* expr) {
+InterpreterResult Interpreter::visit(const StrLiteral* expr) {
     InterpreterResult result;
     result.str_val = expr->value;
-    result.kind = InterpreterResult::ResultType ::STR;
+    result.kind = InterpreterResult::ResultType::STR;
+    return result;
+}
+
+InterpreterResult Interpreter::visit(const NumLiteral *expr) {
+    InterpreterResult result;
+    result.num_val = expr->value;
+    result.kind = InterpreterResult::ResultType::NUMBER;
     return result;
 }
 
@@ -150,10 +161,6 @@ InterpreterResult Interpreter::visit(const Unary* expr) {
         default:
             return result; // Unreachable
     }
-}
-
-InterpreterResult Interpreter::evaluate(const Expr &expr) {
-    return expr.accept(this);
 }
 
 bool Interpreter::is_truthy(const InterpreterResult &expr) {

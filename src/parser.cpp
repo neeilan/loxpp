@@ -114,10 +114,11 @@ Expr* Parser::unary() {
 }
 
 Expr* Parser::primary() {
-    if (match({FALSE})) return (new BoolLiteral(false));
-    if (match({TRUE})) return (new BoolLiteral(true));
-    if (match({NIL})) return (new Literal("nil", true));
-    if (match({NUMBER, STRING})) {return new Literal(previous().literal); }
+    if (match({FALSE}))     return new BoolLiteral(false);
+    if (match({TRUE}))      return new BoolLiteral(true);
+    if (match({NIL}))       return new StrLiteral("nil", true);
+    if (match({NUMBER}))    return new NumLiteral(stod(previous().literal));
+    if (match({STRING}))    return new StrLiteral(previous().literal);
     if (match({LEFT_PAREN})) {
         Expr* expr = expression();
         consume(RIGHT_PAREN, "Expect ')' after expression.");

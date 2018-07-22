@@ -4,14 +4,7 @@
 #include <string>
 
 #include "expr.hpp"
-
-class Expr;
-class Binary;
-class Grouping;
-class Literal;
-class BoolLiteral;
-class Unary;
-
+#include "expr_subtypes.hpp"
 
 template <class T>
 class Visitor {
@@ -20,7 +13,8 @@ public:
     virtual T visit(const Unary*) = 0;
     virtual T visit(const Binary*) = 0;
     virtual T visit(const Grouping*) = 0;
-    virtual T visit(const Literal*) = 0;
+    virtual T visit(const StrLiteral*) = 0;
+    virtual T visit(const NumLiteral*) = 0;
     virtual T visit(const BoolLiteral*) = 0;
 };
 

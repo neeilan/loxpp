@@ -6,11 +6,19 @@ std::string AstPrinter::visit(const Binary* expr) {
     return parenthesize((expr->op).lexeme, &(expr->left), &(expr->right));
 }
 
-std::string AstPrinter::visit(const Literal* expr) {
+std::string AstPrinter::visit(const StrLiteral* expr) {
     if (expr->nil) {
         return "nil";
     } else {
         return expr->value;
+    }
+}
+
+std::string AstPrinter::visit(const NumLiteral* expr) {
+    if (expr->nil) {
+        return "nil";
+    } else {
+        return std::to_string(expr->value);
     }
 }
 

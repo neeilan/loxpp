@@ -50,9 +50,9 @@ public:
     const Expr& expression;
 };
 
-class Literal : public Expr { // split into str literal and num literal
+class StrLiteral : public Expr {
 public:
-    explicit Literal(const std::string& value, bool nil = false) :
+    explicit StrLiteral(const std::string& value, bool nil = false) :
             value(value),
             nil(nil)
     {}
@@ -65,9 +65,27 @@ public:
         return visitor->visit(this);
     }
 
-    std::string kind;
     bool nil;
     std::string value;
+};
+
+class NumLiteral : public Expr {
+public:
+    explicit NumLiteral(double value, bool nil = false) :
+            value(value),
+            nil(nil)
+    {}
+
+    virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    bool nil;
+    double value;
 };
 
 class BoolLiteral : public Expr {

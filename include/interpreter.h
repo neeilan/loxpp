@@ -9,6 +9,7 @@
 #include "interpreter_result.hpp"
 #include "visitor.h"
 
+
 class RuntimeErr : public std::runtime_error {
 public:
     RuntimeErr(Token token, const std::string msg) : std::runtime_error(msg), token(token) {}
@@ -22,7 +23,8 @@ public:
 
 protected:
     InterpreterResult visit(const Binary* expr);
-    InterpreterResult visit(const Literal* expr);
+    InterpreterResult visit(const StrLiteral* expr);
+    InterpreterResult visit(const NumLiteral* expr);
     InterpreterResult visit(const BoolLiteral* expr);
     InterpreterResult visit(const Grouping* expr);
     InterpreterResult visit(const Unary* expr);
