@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+#include "ast_printer.hpp"
+#include "token.hpp"
+#include "expr.hpp"
+
 
 int main(int argc, char **argv) {
     if (argc > 2) {
@@ -18,4 +22,5 @@ int main(int argc, char **argv) {
     }
 
     return 0;
+
 }

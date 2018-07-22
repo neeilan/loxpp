@@ -9,6 +9,7 @@ class Expr;
 class Binary;
 class Grouping;
 class Literal;
+class BoolLiteral;
 class Unary;
 
 
@@ -20,6 +21,7 @@ public:
     virtual T visit(const Binary*) = 0;
     virtual T visit(const Grouping*) = 0;
     virtual T visit(const Literal*) = 0;
+    virtual T visit(const BoolLiteral*) = 0;
 };
 
 #endif //LOXPP_VISITOR_H

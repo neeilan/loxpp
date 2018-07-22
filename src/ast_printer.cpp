@@ -2,6 +2,7 @@
 #include "expr.hpp"
 
 std::string AstPrinter::visit(const Binary* expr) {
+
     return parenthesize((expr->op).lexeme, &(expr->left), &(expr->right));
 }
 
@@ -10,6 +11,14 @@ std::string AstPrinter::visit(const Literal* expr) {
         return "nil";
     } else {
         return expr->value;
+    }
+}
+
+std::string AstPrinter::visit(const BoolLiteral* expr) {
+    if (expr->value) {
+        return "TRUE";
+    } else {
+        return "FALSE";
     }
 }
 

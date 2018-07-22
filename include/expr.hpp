@@ -31,19 +31,38 @@ class Grouping : public Expr {
 public:
     explicit Grouping(Expr& expression) : expression(expression) {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
 
     const Expr& expression;
 };
 
-class Literal : public Expr {
+class Literal : public Expr { // split into str literal and num literal
 public:
-    explicit Literal(const std::string& value, bool nil = false) : value(value), nil(nil) {}
+    explicit Literal(const std::string& value, bool nil = false) :
+            value(value),
+            nil(nil)
+    {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
 
+    std::string kind;
     bool nil;
     std::string value;
+};
+
+class BoolLiteral : public Expr {
+public:
+    explicit  BoolLiteral(bool value) : value(value) {}
+
+    virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    bool value;
 };
 
 
@@ -52,7 +71,9 @@ public:
     Unary(Token op, Expr& right)
             : op(op), right(right) {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
 
     const Token op;
     const Expr& right;

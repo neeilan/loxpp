@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "token.hpp"
+
 class Lox {
 public:
     static void run_file(const char* path);
@@ -12,6 +14,8 @@ public:
     static void run(const std::string& source);
 
     static void error(int line, const std::string& message);
+
+    static void error(Token token, const std::string& message);
 
 private:
     static bool hadError;
