@@ -1,4 +1,5 @@
 #include "expr.hpp"
+#include "interpreter.h"
 #include "lox.hpp"
 #include "parser.h"
 #include "scanner.hpp"
@@ -14,6 +15,10 @@
 #include "ast_printer.hpp"
 
 
+bool Lox::had_error = false;
+bool Lox::had_runtime_error = false;
+
+
 void Lox::run_file(const char *path) {
     const std::ifstream file(path);
     std::stringstream src_buffer;
@@ -22,14 +27,15 @@ void Lox::run_file(const char *path) {
 
     run(src_buffer.str());
 
-    if (hadError) exit(65);  // data format error
+    if (had_error) exit(65);  // data format error
+    if (had_runtime_error) exit(70);
 }
 
 void Lox::run_prompt() {
     std::string curr_line;
 
     while (true) {
-        hadError = false;  // reset error status
+        had_error = false;  // reset error status
         getline(std::cin, curr_line);
 
         std::cout << "> ";
@@ -42,21 +48,26 @@ void Lox::run(const std::string& source) {
     Scanner scanner(source);
     const std::vector<Token> tokens = scanner.scan_tokens();
 
-    Parser parser(tokens);
-    Expr* expr = parser.parse();
-
-    if (hadError) return;
-
-    Expr& e (*expr);
-
-    AstPrinter printer;
-    std::string ast_str(printer.print(*expr));
-    std::cout <<  ast_str << std::endl;
-
     // Print the tokens for now
     for (const Token& token : tokens) {
         std::cout << token.str();
     }
+
+    Parser parser(tokens);
+    Expr* expr = parser.parse();
+
+    if (had_error) return;
+
+    Expr& e (*expr);
+
+    AstPrinter printer;
+    std::cout <<  printer.print(*expr) << std::endl;
+
+
+    std::cout << "Interpreter output:" << std::endl;
+    Interpreter interpreter;
+    interpreter.interpret(*expr);
+
 }
 
 void Lox::error(int line, const std::string& message) {
@@ -71,14 +82,25 @@ void Lox::error(Token token, const std::string& message) {
     }
 }
 
+void Lox::runtime_error(RuntimeErr err) {
+    std::cout << err.what()
+              << " \n[line " << err.token.line
+              << "]"
+              << std::endl;
+
+    had_runtime_error = true;
+
+}
+
+
 // Private
-bool Lox::hadError = false;
 
 void Lox::report(int line,
                  const std::string& occurrence,
                  const std::string& message) {
     std::cout << "[line " << line << "] Error: "
-              << occurrence << " : " << message;
+              << occurrence << " : " << message
+              << std::endl;
 
-    hadError = true;
+    had_error = true;
 }

@@ -1,15 +1,17 @@
 #ifndef LOXPP_SRC_EXPR_H_
 #define LOXPP_SRC_EXPR_H_
 
+#include "interpreter.h"
+#include "interpreter_result.hpp"
 #include "token.hpp"
 #include "visitor.h"
 
 #include <string>
 
-
 class Expr {
 public:
     virtual std::string accept(Visitor<std::string>* visitor) const = 0;
+    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const = 0;
     virtual ~Expr() {};
 };
 
@@ -19,7 +21,13 @@ public:
     Binary(Expr& left, Token op, Expr& right)
             : left(left), op(op), right(right) {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const { return visitor->visit(this); }
+    virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
 
     const Expr& left;
     const Token op;
@@ -32,6 +40,10 @@ public:
     explicit Grouping(Expr& expression) : expression(expression) {}
 
     virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 
@@ -49,6 +61,10 @@ public:
         return visitor->visit(this);
     }
 
+    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
     std::string kind;
     bool nil;
     std::string value;
@@ -62,6 +78,10 @@ public:
         return visitor->visit(this);
     }
 
+    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
     bool value;
 };
 
@@ -72,6 +92,10 @@ public:
             : op(op), right(right) {}
 
     virtual std::string accept(Visitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "token.hpp"
+#include "interpreter.h"
 
 class Lox {
 public:
@@ -17,8 +18,12 @@ public:
 
     static void error(Token token, const std::string& message);
 
+    static void runtime_error(RuntimeErr err);
+
 private:
-    static bool hadError;
+    static bool had_error;
+
+    static bool had_runtime_error;
 
     static void report(int line, const std::string& occurrence, const std::string& message);
 
