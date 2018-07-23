@@ -59,54 +59,54 @@ InterpreterResult Interpreter::visit(const Binary* expr) {
     switch (expr->op.type) {
         case BANG_EQUAL : {
             result.bool_val = !is_equal(left, right);
-            result.kind = result.kind = InterpreterResult::ResultType::BOOL;
+            result.kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case EQUAL_EQUAL : {
             result.bool_val = !is_equal(left, right);
-            result.kind = result.kind = InterpreterResult::ResultType::BOOL;
+            result.kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case GREATER : {
             check_numeric_operands(expr->op, left, right);
             result.bool_val = left.num_val > right.num_val;
-            result.kind = result.kind = InterpreterResult::ResultType::BOOL;
+            result.kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case GREATER_EQUAL : {
             check_numeric_operands(expr->op, left, right);
             result.bool_val = left.num_val >= right.num_val;
-            result.kind = result.kind = InterpreterResult::ResultType::BOOL;
+            result.kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case LESS : {
             check_numeric_operands(expr->op, left, right);
             result.bool_val = left.num_val < right.num_val;
-            result.kind = result.kind = InterpreterResult::ResultType::BOOL;
+            result.kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case LESS_EQUAL : {
             check_numeric_operands(expr->op, left, right);
             result.bool_val = left.num_val <= right.num_val;
-            result.kind = result.kind = InterpreterResult::ResultType::BOOL;
+            result.kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case MINUS: {
             check_numeric_operands(expr->op, left, right);
             result.num_val = left.num_val - right.num_val;
-            result.kind = result.kind = InterpreterResult::ResultType::NUMBER;
+            result.kind = InterpreterResult::ResultType::NUMBER;
             break;
         }
         case SLASH: {
             check_numeric_operands(expr->op, left, right);
             result.num_val = left.num_val / right.num_val;
-            result.kind = result.kind = InterpreterResult::ResultType::NUMBER;
+            result.kind = InterpreterResult::ResultType::NUMBER;
             break;
         }
         case STAR: {
             check_numeric_operands(expr->op, left, right);
             result.num_val = left.num_val * right.num_val;
-            result.kind = result.kind = InterpreterResult::ResultType::NUMBER;
+            result.kind = InterpreterResult::ResultType::NUMBER;
             break;
         }
         case PLUS : {
