@@ -3,13 +3,21 @@
 
 #include <string>
 
-#include "expr.hpp"
-#include "expr_subtypes.hpp"
+//#include "expr.hpp"
+//#include "stmt.hpp"
+#include "visitable_types.hpp"
+
+
+class StmtVisitor {
+public:
+    virtual ~StmtVisitor() {};
+    virtual void visit(const Stmt&) = 0;
+};
 
 template <class T>
-class Visitor {
+class ExprVisitor {
 public:
-    virtual ~Visitor() {};
+    virtual ~ExprVisitor() {};
     virtual T visit(const Unary*) = 0;
     virtual T visit(const Binary*) = 0;
     virtual T visit(const Grouping*) = 0;

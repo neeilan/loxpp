@@ -38,7 +38,7 @@ std::string InterpreterResult::stringify(InterpreterResult &result) {
     }
 
     if (result.kind == InterpreterResult::ResultType::STR) {
-        return "'" + result.str_val + "'";
+        return result.str_val;
     }
 
     if (result.kind == InterpreterResult::ResultType::BOOL) {

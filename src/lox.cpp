@@ -2,6 +2,7 @@
 #include "interpreter.h"
 #include "lox.hpp"
 #include "parser.h"
+#include "stmt.hpp"
 #include "scanner.hpp"
 #include "token.hpp"
 
@@ -54,19 +55,13 @@ void Lox::run(const std::string& source) {
     }
 
     Parser parser(tokens);
-    Expr* expr = parser.parse();
+    std::vector<Stmt> statements = parser.parse();
 
     if (had_error) return;
 
-    Expr& e (*expr);
-
-    AstPrinter printer;
-    std::cout <<  printer.print(*expr) << std::endl;
-
-
     std::cout << "Interpreter output:" << std::endl;
     Interpreter interpreter;
-    interpreter.interpret(*expr);
+    interpreter.interpret(statements);
 
 }
 

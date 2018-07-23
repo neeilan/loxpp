@@ -10,8 +10,8 @@
 
 class Expr {
 public:
-    virtual std::string accept(Visitor<std::string>* visitor) const = 0;
-    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const = 0;
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const = 0;
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const = 0;
     virtual ~Expr() {};
 };
 
@@ -21,11 +21,11 @@ public:
     Binary(Expr& left, Token op, Expr& right)
             : left(left), op(op), right(right) {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const {
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 
@@ -39,11 +39,11 @@ class Grouping : public Expr {
 public:
     explicit Grouping(Expr& expression) : expression(expression) {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const {
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 
@@ -57,11 +57,11 @@ public:
             nil(nil)
     {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const {
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 
@@ -76,11 +76,11 @@ public:
             nil(nil)
     {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const {
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 
@@ -92,11 +92,11 @@ class BoolLiteral : public Expr {
 public:
     explicit  BoolLiteral(bool value) : value(value) {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const {
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 
@@ -109,11 +109,11 @@ public:
     Unary(Token op, Expr& right)
             : op(op), right(right) {}
 
-    virtual std::string accept(Visitor<std::string>* visitor) const {
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(Visitor<InterpreterResult>* visitor) const {
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
         return visitor->visit(this);
     }
 

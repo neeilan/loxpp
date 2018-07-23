@@ -9,4 +9,6 @@ class StrLiteral;
 class NumLiteral;
 class BoolLiteral;
 
+class Stmt;
+
 #endif //LOXPP_EXPR_SUBTYPES_HPP

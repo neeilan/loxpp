@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "token.hpp"
-#include "expr.hpp"
+//#include "expr.hpp"
+#include "stmt.hpp"
 
 class ParseErr : std::runtime_error {
 public:
@@ -17,7 +18,7 @@ public:
 class Parser {
 public:
     Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
-    Expr* parse();
+    std::vector<Stmt> parse();
 private:
     int current = 0; // next token to be used
     std::vector<Token> tokens;
@@ -39,6 +40,10 @@ private:
     Expr* multiplication();
     Expr* unary();
     Expr* primary();
+
+    Stmt statement();
+    Stmt print_statement();
+    Stmt expression_statement();
 
     ParseErr error(Token token, std::string msg);
     void synchronize();

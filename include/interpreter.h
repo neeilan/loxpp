@@ -3,11 +3,13 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "token.hpp"
 #include "expr.hpp"
 #include "interpreter_result.hpp"
 #include "visitor.h"
+#include "stmt.hpp"
 
 
 class RuntimeErr : public std::runtime_error {
@@ -17,9 +19,10 @@ public:
     Token token;
 };
 
-class Interpreter : public Visitor<InterpreterResult> {
+class Interpreter : public ExprVisitor<InterpreterResult>, public StmtVisitor {
 public:
-    void interpret(const Expr& expr);
+    void interpret(const std::vector<Stmt>& statements);
+    ~Interpreter() {}
 
 protected:
     InterpreterResult visit(const Binary* expr);
@@ -29,7 +32,10 @@ protected:
     InterpreterResult visit(const Grouping* expr);
     InterpreterResult visit(const Unary* expr);
 
+    void visit(const Stmt& stmt);
+
 private:
+    void execute(const Stmt& stmt);
     InterpreterResult evaluate(const Expr& expr);
     bool is_truthy(const InterpreterResult& expr);
     bool is_equal(const InterpreterResult& left, const InterpreterResult& right);

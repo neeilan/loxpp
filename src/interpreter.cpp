@@ -16,22 +16,32 @@ inline std::string operator_name(TokenType op) {
 }
 
 
-void Interpreter::interpret(const Expr &expr) {
+void Interpreter::interpret(const std::vector<Stmt>& statements) {
     try {
-        InterpreterResult value = evaluate(expr);
-        std::cout << InterpreterResult::stringify(value) << std::endl;
-
+        for (const Stmt& stmt : statements) {
+            execute(stmt);
+        }
     } catch (RuntimeErr err) {
         Lox::runtime_error(err);
-
     }
 }
 
+void Interpreter::execute(const Stmt& stmt) {
+    stmt.accept(this);
+}
+
+
+void Interpreter::visit(const Stmt &stmt) {
+    InterpreterResult result = evaluate(*stmt.expression);
+
+    if (stmt.print) {
+        std::cout << InterpreterResult::stringify(result) << std::endl;
+    }
+}
 
 InterpreterResult Interpreter::evaluate(const Expr &expr) {
     return expr.accept(this);
 }
-
 
 InterpreterResult Interpreter::visit(const Binary* expr) {
 

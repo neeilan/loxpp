@@ -6,7 +6,7 @@
 #include "expr.hpp"
 #include "visitor.h"
 
-class AstPrinter : public Visitor<std::string> {
+class AstPrinter : public ExprVisitor<std::string> {
 public:
     std::string print(Expr& expr) {
         return expr.accept(this);

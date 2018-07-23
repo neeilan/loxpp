@@ -1,17 +1,42 @@
 #include "parser.h"
 #include "lox.hpp"
 #include "token.hpp"
+#include "stmt.hpp"
 
 #include <memory>
 #include <vector>
 
 
-Expr* Parser::parse() {
-    try {
-        return expression();
-    } catch (ParseErr) {
-        return (nullptr);
+std::vector<Stmt> Parser::parse() {
+    std::vector<Stmt> statements;
+
+    while (!at_end()) {
+        statements.push_back(statement());
     }
+
+    return statements;
+//    try {
+//        return expression();
+//    } catch (ParseErr) {
+//        return (nullptr);
+//    }
+}
+
+Stmt Parser::statement() {
+    if (match({PRINT})) return print_statement();
+    return expression_statement();
+}
+
+Stmt Parser::print_statement() {
+    Expr* value = expression();
+    consume(SEMICOLON, "Expect ';' after value.");
+    return Stmt(value, true);
+}
+
+Stmt Parser::expression_statement() {
+    Expr* value = expression();
+    consume(SEMICOLON, "Expect ';' after expression.");
+    return Stmt(value);
 }
 
 Expr* Parser::expression() {
@@ -21,7 +46,7 @@ Expr* Parser::expression() {
 Expr* Parser::equality() {
     Expr* expr = comparison();
 
-    while (match(std::vector<TokenType >(BANG_EQUAL, EQUAL_EQUAL))) { // todo: fix this constructor
+    while (match({BANG_EQUAL, EQUAL_EQUAL})) {
         Token op = previous();
         Expr* right = comparison();
         expr = (new Binary(*expr, op, *right));
