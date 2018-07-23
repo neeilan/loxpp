@@ -17,15 +17,20 @@ public:
       name(Token(IDENTIFIER, "", "", 0)){}
 
     // Variable statement
-    explicit  Stmt(const Token name, const Expr* initializer) : name(name), expression(initializer) {}
+    explicit  Stmt(const Token name, const Expr* initializer)
+            : var(true),
+              name(name),
+              expression(initializer) {}
 
 
     void accept(StmtVisitor* visitor) const {
         visitor->visit(*this);
     }
 
-    const Expr* expression = nullptr;
     bool print = false;
+    bool var = false;
+
+    const Expr* expression = nullptr;
     const Token name;
 
 };

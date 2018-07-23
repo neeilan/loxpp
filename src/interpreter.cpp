@@ -32,10 +32,16 @@ void Interpreter::execute(const Stmt& stmt) {
 
 
 void Interpreter::visit(const Stmt &stmt) {
-    InterpreterResult result = evaluate(*stmt.expression);
+
+    InterpreterResult value = evaluate(*stmt.expression);
+
+    if (stmt.var) {
+        environment.define(stmt.name.lexeme, value);
+        return;
+    }
 
     if (stmt.print) {
-        std::cout << InterpreterResult::stringify(result) << std::endl;
+        std::cout << InterpreterResult::stringify(value) << std::endl;
     }
 }
 
@@ -174,7 +180,7 @@ InterpreterResult Interpreter::visit(const Unary* expr) {
 }
 
 InterpreterResult Interpreter::visit(const Variable *expr) {
-
+    return environment.get(expr->name);
 }
 
 bool Interpreter::is_truthy(const InterpreterResult &expr) {

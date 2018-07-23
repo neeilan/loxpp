@@ -10,6 +10,7 @@
 #include "interpreter_result.hpp"
 #include "visitor.h"
 #include "stmt.hpp"
+#include "environment.hpp"
 
 
 class RuntimeErr : public std::runtime_error {
@@ -36,6 +37,7 @@ protected:
     void visit(const Stmt& stmt);
 
 private:
+    Environment environment;
     void execute(const Stmt& stmt);
     InterpreterResult evaluate(const Expr& expr);
     bool is_truthy(const InterpreterResult& expr);
