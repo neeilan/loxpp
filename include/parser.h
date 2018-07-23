@@ -41,6 +41,8 @@ private:
     Expr* unary();
     Expr* primary();
 
+    Stmt declaration();
+    Stmt var_declaration();
     Stmt statement();
     Stmt print_statement();
     Stmt expression_statement();

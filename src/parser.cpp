@@ -6,20 +6,43 @@
 #include <memory>
 #include <vector>
 
-
 std::vector<Stmt> Parser::parse() {
     std::vector<Stmt> statements;
 
     while (!at_end()) {
-        statements.push_back(statement());
+        try {
+            statements.push_back(declaration());
+        } catch  (ParseErr) {
+            // Already synchronized, thrown as a sentinel here
+        }
     }
 
     return statements;
-//    try {
-//        return expression();
-//    } catch (ParseErr) {
-//        return (nullptr);
-//    }
+}
+
+Stmt Parser::declaration() {
+    try {
+        if (match({VAR})) {
+            return var_declaration();
+        } else {
+            return statement();
+        }
+    } catch (ParseErr err) {
+        synchronize();
+        throw err;
+    }
+}
+
+Stmt Parser::var_declaration() {
+    Token name = consume(IDENTIFIER, "Expect variable name.");
+    Expr* initializer = new StrLiteral("nil", true);
+
+    if (match({EQUAL})) {
+        initializer = expression();
+    }
+
+    consume(SEMICOLON, "Expect ';' after variable declaration.");
+    return Stmt(name, initializer);
 }
 
 Stmt Parser::statement() {
@@ -139,11 +162,13 @@ Expr* Parser::unary() {
 }
 
 Expr* Parser::primary() {
-    if (match({FALSE}))     return new BoolLiteral(false);
-    if (match({TRUE}))      return new BoolLiteral(true);
-    if (match({NIL}))       return new StrLiteral("nil", true);
-    if (match({NUMBER}))    return new NumLiteral(stod(previous().literal));
-    if (match({STRING}))    return new StrLiteral(previous().literal);
+    // todo: this can be a switch
+    if (match({FALSE}))         return new BoolLiteral(false);
+    if (match({TRUE}))          return new BoolLiteral(true);
+    if (match({NIL}))           return new StrLiteral("nil", true);
+    if (match({NUMBER}))        return new NumLiteral(stod(previous().literal));
+    if (match({STRING}))        return new StrLiteral(previous().literal);
+    if (match({IDENTIFIER}))    return new Variable(previous());
     if (match({LEFT_PAREN})) {
         Expr* expr = expression();
         consume(RIGHT_PAREN, "Expect ')' after expression.");

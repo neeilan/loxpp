@@ -8,6 +8,7 @@ class Grouping;
 class StrLiteral;
 class NumLiteral;
 class BoolLiteral;
+class Variable;
 
 class Stmt;
 

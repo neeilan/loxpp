@@ -3,8 +3,6 @@
 
 #include <string>
 
-//#include "expr.hpp"
-//#include "stmt.hpp"
 #include "visitable_types.hpp"
 
 
@@ -24,6 +22,7 @@ public:
     virtual T visit(const StrLiteral*) = 0;
     virtual T visit(const NumLiteral*) = 0;
     virtual T visit(const BoolLiteral*) = 0;
+    virtual T visit(const Variable*) = 0;
 };
 
 #endif //LOXPP_VISITOR_H

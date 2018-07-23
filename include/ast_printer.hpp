@@ -18,6 +18,7 @@ public:
     std::string visit(const StrLiteral*);
     std::string visit(const NumLiteral*);
     std::string visit(const BoolLiteral* expr);
+    std::string visit(const Variable* expr);
 private:
     std::string parenthesize(std::string, const Expr*); // todo: change these to variadic template
     std::string parenthesize(std::string, const Expr*, const Expr*);

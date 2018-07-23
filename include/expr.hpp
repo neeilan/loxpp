@@ -121,5 +121,21 @@ public:
     const Expr& right;
 };
 
+class Variable : public Expr {
+public:
+    Variable(Token name)
+            : name(name) {}
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    const Token name;
+};
+
 #endif
 
