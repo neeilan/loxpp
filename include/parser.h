@@ -46,6 +46,7 @@ private:
     Stmt var_declaration();
     Stmt statement();
     Stmt print_statement();
+    Stmt block_statement();
     Stmt expression_statement();
 
     ParseErr error(Token token, std::string msg);

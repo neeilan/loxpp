@@ -33,6 +33,24 @@ void Interpreter::execute(const Stmt& stmt) {
 
 void Interpreter::visit(const Stmt &stmt) {
 
+    if (stmt.block) {
+        Environment previous = environment;
+        try {
+            Environment env(&previous);
+
+            for (const Stmt &inner_statement : stmt.block_contents) {
+                execute(inner_statement);
+            }
+
+            environment = previous;
+
+        } catch (std::exception e) {
+            environment = previous;
+        };
+
+        return;
+    }
+
     InterpreterResult value = evaluate(*stmt.expression);
 
     if (stmt.var) {

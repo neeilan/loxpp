@@ -36,13 +36,14 @@ Stmt Parser::var_declaration() {
     if (match({EQUAL})) {
         initializer = expression();
     }
-
     consume(SEMICOLON, "Expect ';' after variable declaration.");
     return Stmt(name, initializer);
 }
 
 Stmt Parser::statement() {
     if (match({PRINT})) return print_statement();
+    if (match({LEFT_BRACE})) return block_statement();
+
     return expression_statement();
 }
 
@@ -50,6 +51,18 @@ Stmt Parser::print_statement() {
     Expr* value = expression();
     consume(SEMICOLON, "Expect ';' after value.");
     return Stmt(value, true);
+}
+
+Stmt Parser::block_statement() {
+    std::vector<Stmt> stmts;
+
+    while (!check(RIGHT_BRACE) && !at_end()) {
+        stmts.push_back(declaration());
+    }
+
+    consume(RIGHT_BRACE, "Expect '}' after block.");
+
+    return Stmt(stmts);
 }
 
 Stmt Parser::expression_statement() {

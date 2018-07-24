@@ -13,17 +13,22 @@ class Environment;
 class Environment {
 public:
     explicit Environment()
-            : enclosing(std::shared_ptr<Environment>(nullptr)) {};
+            : enclosing(nullptr) {};
 
-    explicit Environment(std::shared_ptr<Environment> enclosing)
+    explicit Environment(Environment* enclosing)
             : enclosing(enclosing) {}
+
+    Environment(const Environment& env) {
+        this->enclosing = env.enclosing;
+        this->values = env.values;
+    }
 
     void define(std::string name, InterpreterResult &value);
     void assign(const Token name, InterpreterResult &value);
     InterpreterResult get(Token name);
 
 private:
-    const std::shared_ptr<Environment> enclosing;
+    Environment* enclosing;
     std::map<std::string, InterpreterResult> values;
 };
 
