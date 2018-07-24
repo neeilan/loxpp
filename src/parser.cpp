@@ -13,23 +13,19 @@ std::vector<Stmt> Parser::parse() {
         try {
             statements.push_back(declaration());
         } catch  (ParseErr) {
-            // Already synchronized, thrown as a sentinel here
+            synchronize();
         }
     }
 
     return statements;
 }
 
+
 Stmt Parser::declaration() {
-    try {
-        if (match({VAR})) {
-            return var_declaration();
-        } else {
-            return statement();
-        }
-    } catch (ParseErr err) {
-        synchronize();
-        throw err;
+    if (match({VAR})) {
+        return var_declaration();
+    } else {
+        return statement();
     }
 }
 
@@ -62,8 +58,33 @@ Stmt Parser::expression_statement() {
     return Stmt(value);
 }
 
+
 Expr* Parser::expression() {
-    return equality();
+    return assignment();
+}
+
+
+Expr* Parser::assignment() {
+    // Don't have a lot of lookahead, so use a 'trick' here:
+    // All assignment targets are valid exprs (ex - 'a.prop.b')
+    // so parse LHS as an Expr and check that it's an l-value.
+    Expr* expr = equality();
+
+    if (match({EQUAL})) {
+        Token equals = previous();
+        Expr* value = assignment(); // right-associative, so recurse
+
+        if (expr->lvalue()) {
+            Variable* variable = dynamic_cast<Variable*>(expr);
+            return new Assignment(variable->name, *value);
+        }
+
+        Lox::error(equals, "Invalid assignment target.");
+    }
+
+    // If no assignment found, fall through to
+    // the higher-precedence, valid Expr.
+    return expr;
 }
 
 Expr* Parser::equality() {

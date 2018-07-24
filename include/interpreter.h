@@ -33,6 +33,7 @@ protected:
     InterpreterResult visit(const Grouping* expr);
     InterpreterResult visit(const Unary* expr);
     InterpreterResult visit(const Variable* expr);
+    InterpreterResult visit(const Assignment* expr);
 
     void visit(const Stmt& stmt);
 

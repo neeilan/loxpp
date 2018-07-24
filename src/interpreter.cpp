@@ -183,6 +183,12 @@ InterpreterResult Interpreter::visit(const Variable *expr) {
     return environment.get(expr->name);
 }
 
+InterpreterResult Interpreter::visit(const Assignment *expr) {
+    InterpreterResult value = evaluate(expr->value);
+    environment.assign(expr->name, value);
+    return value; // Allows for statements like: print a = 2; -> "2"
+}
+
 bool Interpreter::is_truthy(const InterpreterResult &expr) {
     if (expr.kind == InterpreterResult::ResultType::NIL) {
         return false;

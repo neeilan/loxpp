@@ -12,6 +12,7 @@ class Expr {
 public:
     virtual std::string accept(ExprVisitor<std::string>* visitor) const = 0;
     virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const = 0;
+    virtual bool lvalue() const { return false; }
     virtual ~Expr() {};
 };
 
@@ -134,7 +135,26 @@ public:
         return visitor->visit(this);
     }
 
+    virtual bool lvalue() const { return true; }
+
     const Token name;
+};
+
+class Assignment : public Expr {
+public:
+    Assignment(Token name, Expr& value)
+            : name(name), value(value) {}
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    const Token name;
+    const Expr& value;
 };
 
 #endif

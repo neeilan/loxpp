@@ -33,6 +33,7 @@ private:
     Token& peek();
     Token& previous();
 
+    Expr* assignment();
     Expr* expression();
     Expr* equality();
     Expr* comparison();

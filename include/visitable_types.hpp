@@ -9,6 +9,7 @@ class StrLiteral;
 class NumLiteral;
 class BoolLiteral;
 class Variable;
+class Assignment;
 
 class Stmt;
 
