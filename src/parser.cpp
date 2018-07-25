@@ -41,10 +41,12 @@ Stmt* Parser::var_declaration() {
 }
 
 Stmt* Parser::statement() {
+    if (match({IF})) return if_statement();
     if (match({PRINT})) return print_statement();
     if (match({WHILE})) return  while_statement();
+    if (match({FOR})) return for_statement();
     if (match({LEFT_BRACE})) return block_statement();
-    if (match({IF})) return if_statement();
+
 
     return expression_statement();
 }
@@ -85,6 +87,55 @@ Stmt* Parser::while_statement() {
 
     Stmt* body = statement();
     return new WhileStmt(condition, body);
+}
+
+/*
+ * Desugar for-loop into equivalent while-loop.
+ */
+Stmt* Parser::for_statement() {
+    consume(LEFT_PAREN, "Expect '(' after 'for'.");
+
+    Stmt* initializer = nullptr;
+
+    if (match({VAR})) {
+        initializer = var_declaration();
+    } else {
+        initializer = expression_statement();
+    }
+
+    Expr* condition = nullptr;
+
+    if (!check(SEMICOLON)) { // Ensure this clause hasn't been omitted as in for (stmt;;stmt)
+        condition = expression();
+    }
+
+    consume(SEMICOLON, "Expect ';' after loop condition.");
+
+    Expr* increment = nullptr;
+    if (!check(RIGHT_PAREN)) {
+        increment = expression();
+    }
+    consume(RIGHT_PAREN, "Expect ')' after for clauses.");
+
+    Stmt* body = statement();
+
+
+    // The actual desugaring
+    if (increment) {
+        body = new BlockStmt({ body, new ExprStmt(increment) });
+    }
+
+    if (!condition) {
+        condition = new BoolLiteral(true);
+    }
+
+    body = new WhileStmt(condition, body);
+
+    if (initializer) {
+        body = new BlockStmt({ initializer, body });
+    }
+
+    return body;
 }
 
 Stmt* Parser::expression_statement() {

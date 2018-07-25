@@ -52,6 +52,7 @@ private:
     Stmt* expression_statement();
     Stmt* if_statement();
     Stmt* while_statement();
+    Stmt* for_statement();
 
     ParseErr error(Token token, std::string msg);
     void synchronize();
