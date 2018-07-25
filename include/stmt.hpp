@@ -13,38 +13,59 @@
 
 class Stmt {
 public:
-    explicit Stmt(const Expr* expression, bool print=false)
-    : expression(expression),
-      print(print),
-      name(Token(NIL, "nil", "nil", 0)){}
+    virtual void accept(StmtVisitor *visitor) const = 0;
+};
 
-    // Variable statement
-    explicit  Stmt(const Token name, const Expr* initializer)
-            : var(true),
-              name(name),
-              expression(initializer) {}
+class ExprStmt : public Stmt {
+public:
+    explicit ExprStmt(const Expr* expression)
+            : expression(expression) {}
 
-    // Block
-    explicit Stmt(std::vector<Stmt> block_contents)
-            : block(true),
-              block_contents(block_contents),
-              name(Token(NIL, "nil", "nil", 0)) {}
-
-    void accept(StmtVisitor* visitor) const {
-        visitor->visit(*this);
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
     }
 
-    bool print = false;
-    bool var = false;
-    bool block = false;
+    const Expr* expression = nullptr;
+};
 
-    std::vector<Stmt> block_contents;
+class PrintStmt : public  Stmt {
+public:
+    explicit PrintStmt(const Expr* expression)
+            : expression(expression) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
 
     const Expr* expression = nullptr;
-    const Token name;
 
 };
 
+class VarStmt : public Stmt {
+public:
+    explicit  VarStmt(const Token name, const Expr* initializer)
+            : name(name),
+              expression(initializer) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
+
+    const Token name;
+    const Expr* expression = nullptr;
+};
+
+class BlockStmt : public Stmt {
+public:
+    explicit BlockStmt(std::vector<Stmt*> block_contents)
+            : block_contents(block_contents) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
+
+    std::vector<Stmt*> block_contents;
+};
 
 #endif
 

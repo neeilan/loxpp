@@ -55,7 +55,7 @@ void Lox::run(const std::string& source) {
     }
 
     Parser parser(tokens);
-    std::vector<Stmt> statements = parser.parse();
+    std::vector<Stmt*> statements = parser.parse();
 
     if (had_error) return;
 

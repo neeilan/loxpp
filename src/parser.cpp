@@ -6,8 +6,8 @@
 #include <memory>
 #include <vector>
 
-std::vector<Stmt> Parser::parse() {
-    std::vector<Stmt> statements;
+std::vector<Stmt*> Parser::parse() {
+    std::vector<Stmt*> statements;
 
     while (!at_end()) {
         try {
@@ -21,7 +21,7 @@ std::vector<Stmt> Parser::parse() {
 }
 
 
-Stmt Parser::declaration() {
+Stmt* Parser::declaration() {
     if (match({VAR})) {
         return var_declaration();
     } else {
@@ -29,7 +29,7 @@ Stmt Parser::declaration() {
     }
 }
 
-Stmt Parser::var_declaration() {
+Stmt* Parser::var_declaration() {
     Token name = consume(IDENTIFIER, "Expect variable name.");
     Expr* initializer = new StrLiteral("nil", true);
 
@@ -37,24 +37,24 @@ Stmt Parser::var_declaration() {
         initializer = expression();
     }
     consume(SEMICOLON, "Expect ';' after variable declaration.");
-    return Stmt(name, initializer);
+    return new VarStmt(name, initializer);
 }
 
-Stmt Parser::statement() {
+Stmt* Parser::statement() {
     if (match({PRINT})) return print_statement();
     if (match({LEFT_BRACE})) return block_statement();
 
     return expression_statement();
 }
 
-Stmt Parser::print_statement() {
+Stmt* Parser::print_statement() {
     Expr* value = expression();
     consume(SEMICOLON, "Expect ';' after value.");
-    return Stmt(value, true);
+    return new PrintStmt(value);
 }
 
-Stmt Parser::block_statement() {
-    std::vector<Stmt> stmts;
+Stmt* Parser::block_statement() {
+    std::vector<Stmt*> stmts;
 
     while (!check(RIGHT_BRACE) && !at_end()) {
         stmts.push_back(declaration());
@@ -62,13 +62,13 @@ Stmt Parser::block_statement() {
 
     consume(RIGHT_BRACE, "Expect '}' after block.");
 
-    return Stmt(stmts);
+    return new BlockStmt(stmts);
 }
 
-Stmt Parser::expression_statement() {
+Stmt* Parser::expression_statement() {
     Expr* value = expression();
     consume(SEMICOLON, "Expect ';' after expression.");
-    return Stmt(value);
+    return new ExprStmt(value);
 }
 
 

@@ -18,7 +18,7 @@ public:
 class Parser {
 public:
     Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
-    std::vector<Stmt> parse();
+    std::vector<Stmt*> parse();
 private:
     int current = 0; // next token to be used
     std::vector<Token> tokens;
@@ -42,12 +42,12 @@ private:
     Expr* unary();
     Expr* primary();
 
-    Stmt declaration();
-    Stmt var_declaration();
-    Stmt statement();
-    Stmt print_statement();
-    Stmt block_statement();
-    Stmt expression_statement();
+    Stmt* declaration();
+    Stmt* var_declaration();
+    Stmt* statement();
+    Stmt* print_statement();
+    Stmt* block_statement();
+    Stmt* expression_statement();
 
     ParseErr error(Token token, std::string msg);
     void synchronize();

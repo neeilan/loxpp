@@ -22,7 +22,7 @@ public:
 
 class Interpreter : public ExprVisitor<InterpreterResult>, public StmtVisitor {
 public:
-    void interpret(const std::vector<Stmt>& statements);
+    void interpret(const std::vector<Stmt*>& statements);
     ~Interpreter() {}
 
 protected:
@@ -35,11 +35,15 @@ protected:
     InterpreterResult visit(const Variable* expr);
     InterpreterResult visit(const Assignment* expr);
 
-    void visit(const Stmt& stmt);
+    void visit(const BlockStmt*);
+    void visit(const ExprStmt*);
+    void visit(const PrintStmt*);
+    void visit(const VarStmt*);
+
 
 private:
     Environment environment;
-    void execute(const Stmt& stmt);
+    void execute(const Stmt* stmt);
     InterpreterResult evaluate(const Expr& expr);
     bool is_truthy(const InterpreterResult& expr);
     bool is_equal(const InterpreterResult& left, const InterpreterResult& right);

@@ -16,9 +16,9 @@ inline std::string operator_name(TokenType op) {
 }
 
 
-void Interpreter::interpret(const std::vector<Stmt>& statements) {
+void Interpreter::interpret(const std::vector<Stmt*>& statements) {
     try {
-        for (const Stmt& stmt : statements) {
+        for (const Stmt* stmt : statements) {
             execute(stmt);
         }
     } catch (RuntimeErr err) {
@@ -26,41 +26,37 @@ void Interpreter::interpret(const std::vector<Stmt>& statements) {
     }
 }
 
-void Interpreter::execute(const Stmt& stmt) {
-    stmt.accept(this);
+void Interpreter::execute(const Stmt* stmt) {
+    stmt->accept(this);
 }
 
+void Interpreter::visit(const VarStmt *stmt) {
+    InterpreterResult value = evaluate(*stmt->expression);
+    environment.define(stmt->name.lexeme, value);
+}
 
-void Interpreter::visit(const Stmt &stmt) {
+void Interpreter::visit(const ExprStmt *stmt) {
+    evaluate(*stmt->expression);
+}
 
-    if (stmt.block) {
-        Environment previous = environment;
-        try {
-            Environment env(&previous);
+void Interpreter::visit(const BlockStmt *stmt) {
+    Environment previous = environment;
 
-            for (const Stmt &inner_statement : stmt.block_contents) {
-                execute(inner_statement);
-            }
+    try {
+        Environment env(&previous);
 
-            environment = previous;
-
-        } catch (std::exception e) {
-            environment = previous;
-        };
-
-        return;
+        for (const Stmt* inner_statement : stmt->block_contents) {
+            execute(inner_statement);
+        }
     }
+    catch (std::exception e) {};
 
-    InterpreterResult value = evaluate(*stmt.expression);
+    environment = previous;
+}
 
-    if (stmt.var) {
-        environment.define(stmt.name.lexeme, value);
-        return;
-    }
-
-    if (stmt.print) {
-        std::cout << InterpreterResult::stringify(value) << std::endl;
-    }
+void Interpreter::visit(const PrintStmt *stmt) {
+    InterpreterResult value = evaluate(*(stmt->expression));
+    std::cout << InterpreterResult::stringify(value) << std::endl;
 }
 
 InterpreterResult Interpreter::evaluate(const Expr &expr) {
