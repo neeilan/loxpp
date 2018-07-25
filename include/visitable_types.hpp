@@ -18,5 +18,6 @@ class BlockStmt;
 class PrintStmt;
 class VarStmt;
 class IfStmt;
+class WhileStmt;
 
 #endif //LOXPP_EXPR_SUBTYPES_HPP

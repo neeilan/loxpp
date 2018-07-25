@@ -30,6 +30,7 @@ void Environment::assign(const Token name, InterpreterResult &value) {
 
     if (enclosing) {
         enclosing->assign(name, value);
+        return;
     }
 
     throw RuntimeErr(name, "Undefined assignment target '" + name.lexeme + "'.");

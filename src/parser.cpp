@@ -42,6 +42,7 @@ Stmt* Parser::var_declaration() {
 
 Stmt* Parser::statement() {
     if (match({PRINT})) return print_statement();
+    if (match({WHILE})) return  while_statement();
     if (match({LEFT_BRACE})) return block_statement();
     if (match({IF})) return if_statement();
 
@@ -75,6 +76,15 @@ Stmt* Parser::if_statement() {
     Stmt* else_branch = match({ELSE}) ? statement() : nullptr;
 
     return new IfStmt(condition, then_branch, else_branch);
+}
+
+Stmt* Parser::while_statement() {
+    consume(LEFT_PAREN, "Expect '(' after 'while'.");
+    Expr* condition = expression();
+    consume(RIGHT_PAREN, "Expect ')' after condition.");
+
+    Stmt* body = statement();
+    return new WhileStmt(condition, body);
 }
 
 Stmt* Parser::expression_statement() {

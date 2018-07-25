@@ -83,5 +83,19 @@ public:
     const Stmt* else_branch;
 };
 
+class WhileStmt : public Stmt {
+public:
+    explicit WhileStmt(Expr* condition, Stmt* body)
+            : condition(condition),
+              body(body) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
+
+    const Expr* condition;
+    const Stmt* body;
+};
+
 #endif
 

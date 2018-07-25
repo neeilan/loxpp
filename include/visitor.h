@@ -15,6 +15,7 @@ public:
     virtual void visit(const PrintStmt*) = 0;
     virtual void visit(const VarStmt*) = 0;
     virtual void visit(const IfStmt*) = 0;
+    virtual void visit(const WhileStmt*) = 0;
 };
 
 template <class T>

@@ -2,6 +2,7 @@
 
 #include "interpreter.h"
 #include "interpreter_result.hpp"
+#include "interpreter_consts.hpp"
 #include "expr.hpp"
 #include "lox.hpp"
 
@@ -33,7 +34,7 @@ void Interpreter::visit(const BlockStmt *stmt) {
     Environment previous = environment;
 
     try {
-        Environment env(&previous);
+        environment = Environment(&previous);
 
         for (const Stmt* inner_statement : stmt->block_contents) {
             execute(inner_statement);
@@ -47,6 +48,12 @@ void Interpreter::visit(const BlockStmt *stmt) {
 void Interpreter::visit(const PrintStmt *stmt) {
     InterpreterResult value = evaluate(*(stmt->expression));
     std::cout << InterpreterResult::stringify(value) << std::endl;
+}
+
+void Interpreter::visit(const WhileStmt *stmt) {
+    while(is_truthy(evaluate(*stmt->condition))) {
+        execute(stmt->body);
+    }
 }
 
 InterpreterResult Interpreter::evaluate(const Expr &expr) {
@@ -76,7 +83,7 @@ InterpreterResult Interpreter::visit(const Binary* expr) {
             break;
         }
         case EQUAL_EQUAL : {
-            result.bool_val = !is_equal(left, right);
+            result.bool_val = is_equal(left, right);
             result.kind = InterpreterResult::ResultType::BOOL;
             break;
         }
@@ -220,7 +227,8 @@ bool Interpreter::is_truthy(const InterpreterResult &expr) {
     }
     if (expr.kind == InterpreterResult::ResultType::BOOL) {
         return expr.bool_val;
-    }
+    } // number?
+
     return true;
 }
 

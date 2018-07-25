@@ -41,6 +41,7 @@ protected:
     void visit(const PrintStmt*);
     void visit(const VarStmt*);
     void visit(const IfStmt*);
+    void visit(const WhileStmt*);
 
 
 private:
