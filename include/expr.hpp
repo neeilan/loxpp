@@ -157,5 +157,26 @@ public:
     const Expr& value;
 };
 
+
+class Logical : public Expr {
+public:
+    Logical(Expr& left, Token op, Expr& right)
+            : left(left),
+              op(op),
+              right(right) {}
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    const Expr& left;
+    const Token op;
+    const Expr& right;
+};
+
 #endif
 

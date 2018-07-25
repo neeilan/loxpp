@@ -10,6 +10,7 @@ class NumLiteral;
 class BoolLiteral;
 class Variable;
 class Assignment;
+class Logical;
 
 class Stmt;
 class ExprStmt;

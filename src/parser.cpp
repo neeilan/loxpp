@@ -93,7 +93,7 @@ Expr* Parser::assignment() {
     // Don't have a lot of lookahead, so use a 'trick' here:
     // All assignment targets are valid exprs (ex - 'a.prop.b')
     // so parse LHS as an Expr and check that it's an l-value.
-    Expr* expr = equality();
+    Expr* expr = logical_or();
 
     if (match({EQUAL})) {
         Token equals = previous();
@@ -109,6 +109,30 @@ Expr* Parser::assignment() {
 
     // If no assignment found, fall through to
     // the higher-precedence, valid Expr.
+    return expr;
+}
+
+Expr* Parser::logical_or() {
+    Expr* expr = logical_and();
+
+    while (match({OR})) {
+        Token op = previous();
+        Expr* right = logical_and();
+        expr = new Logical(*expr, op, *right);
+    }
+
+    return expr;
+}
+
+Expr* Parser::logical_and() {
+    Expr* expr = equality();
+
+    while (match({AND})) {
+        Token op = previous();
+        Expr* right = equality();
+        expr = new Logical(*expr, op, *right);
+    }
+
     return expr;
 }
 

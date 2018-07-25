@@ -42,6 +42,10 @@ std::string AstPrinter::visit(const Variable *expr) {
     return expr->name.lexeme;
 }
 
+std::string AstPrinter::visit(const Logical *expr) {
+    return parenthesize(expr->op.lexeme, &expr->left, &expr->right);
+}
+
 std::string AstPrinter::parenthesize(std::string name, const Expr* expr) {
     return "(" + name + " " + expr->accept(this) + ")";
 }

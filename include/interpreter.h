@@ -34,6 +34,7 @@ protected:
     InterpreterResult visit(const Unary* expr);
     InterpreterResult visit(const Variable* expr);
     InterpreterResult visit(const Assignment* expr);
+    InterpreterResult visit(const Logical* expr);
 
     void visit(const BlockStmt*);
     void visit(const ExprStmt*);

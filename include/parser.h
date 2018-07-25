@@ -34,6 +34,8 @@ private:
     Token& previous();
 
     Expr* assignment();
+    Expr* logical_or();
+    Expr* logical_and();
     Expr* expression();
     Expr* equality();
     Expr* comparison();

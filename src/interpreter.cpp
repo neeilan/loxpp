@@ -202,6 +202,18 @@ InterpreterResult Interpreter::visit(const Assignment *expr) {
     return value; // Allows for statements like: print a = 2; -> "2"
 }
 
+InterpreterResult Interpreter::visit(const Logical *expr) {
+    InterpreterResult left = evaluate(expr->left);
+
+    if (expr->op.type == OR) {
+        if (is_truthy(left)) return  left;
+    } else {
+        if (!is_truthy(left)) return left; // ex - if (false and true)
+    }
+
+    return evaluate(expr->right);
+}
+
 bool Interpreter::is_truthy(const InterpreterResult &expr) {
     if (expr.kind == InterpreterResult::ResultType::NIL) {
         return false;
