@@ -43,6 +43,7 @@ Stmt* Parser::var_declaration() {
 Stmt* Parser::statement() {
     if (match({PRINT})) return print_statement();
     if (match({LEFT_BRACE})) return block_statement();
+    if (match({IF})) return if_statement();
 
     return expression_statement();
 }
@@ -63,6 +64,17 @@ Stmt* Parser::block_statement() {
     consume(RIGHT_BRACE, "Expect '}' after block.");
 
     return new BlockStmt(stmts);
+}
+
+Stmt* Parser::if_statement() {
+    consume(LEFT_PAREN, "Expect '(' after 'if'.");
+    Expr* condition = expression();
+    consume(RIGHT_PAREN, "Expect ')' after if condition.");
+
+    Stmt* then_branch = statement();
+    Stmt* else_branch = match({ELSE}) ? statement() : nullptr;
+
+    return new IfStmt(condition, then_branch, else_branch);
 }
 
 Stmt* Parser::expression_statement() {

@@ -53,6 +53,15 @@ InterpreterResult Interpreter::evaluate(const Expr &expr) {
     return expr.accept(this);
 }
 
+void Interpreter::visit(const IfStmt *stmt) {
+    if (is_truthy(evaluate(*stmt->condition))) {
+        execute(stmt->then_branch);
+    } else if (stmt->else_branch) {
+        execute((stmt->else_branch));
+    }
+}
+
+
 InterpreterResult Interpreter::visit(const Binary* expr) {
 
     InterpreterResult left = evaluate(expr->left);

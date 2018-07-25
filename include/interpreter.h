@@ -39,6 +39,7 @@ protected:
     void visit(const ExprStmt*);
     void visit(const PrintStmt*);
     void visit(const VarStmt*);
+    void visit(const IfStmt*);
 
 
 private:

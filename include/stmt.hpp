@@ -67,5 +67,21 @@ public:
     std::vector<Stmt*> block_contents;
 };
 
+class IfStmt : public Stmt {
+public:
+    explicit IfStmt(Expr* condition, Stmt* then_branch, Stmt* else_branch)
+            : condition(condition),
+              then_branch(then_branch),
+              else_branch(else_branch) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
+
+    const Expr* condition;
+    const Stmt* then_branch;
+    const Stmt* else_branch;
+};
+
 #endif
 

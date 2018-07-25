@@ -48,6 +48,7 @@ private:
     Stmt* print_statement();
     Stmt* block_statement();
     Stmt* expression_statement();
+    Stmt* if_statement();
 
     ParseErr error(Token token, std::string msg);
     void synchronize();
