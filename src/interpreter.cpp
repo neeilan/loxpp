@@ -5,16 +5,6 @@
 #include "expr.hpp"
 #include "lox.hpp"
 
-inline std::string operator_name(TokenType op) {
-    switch (op) {
-        case MINUS: return "-";
-        case STAR : return "*";
-        case PLUS : return "+";
-        case SLASH : return "-";
-        default: return "UNKNOWN OP";
-    }
-}
-
 
 void Interpreter::interpret(const std::vector<Stmt*>& statements) {
     try {
