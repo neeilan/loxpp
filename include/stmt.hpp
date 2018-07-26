@@ -114,5 +114,20 @@ public:
     const std::vector<Stmt*> body;
 };
 
+class ReturnStmt : public Stmt {
+public:
+    explicit ReturnStmt(Token keyword, Expr* value)
+            : keyword(keyword),
+              value(value) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
+
+    const Token keyword;
+    const Expr* value;
+};
+
+
 #endif
 

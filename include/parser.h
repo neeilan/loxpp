@@ -55,6 +55,7 @@ private:
     Stmt* if_statement();
     Stmt* while_statement();
     Stmt* for_statement();
+    Stmt* return_statement();
     Stmt* func_statement(std::string kind);
 
     ParseErr error(Token token, std::string msg);

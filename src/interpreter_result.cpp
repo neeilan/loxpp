@@ -1,6 +1,7 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <iostream>
 
 #include "interpreter.h"
 #include "interpreter_result.hpp"
@@ -49,17 +50,18 @@ std::string InterpreterResult::stringify(InterpreterResult &result) {
 }
 
 InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<InterpreterResult> args) {
-    Environment environment(interpreter->globals);
+    Environment call_env(&interpreter->globals);
+
     for (int i = 0; i < function->parameters.size(); i++) {
-        environment.define(function->parameters[i].lexeme, args[i]);
+        call_env.define(function->parameters[i].lexeme, args[i]);
     }
 
+
     BlockStmt* body = new BlockStmt(function->body);
-    interpreter->execute(body, environment);
+
+
+    interpreter->execute(body, call_env);
     delete body;
 
-    InterpreterResult temp_ret;
-    temp_ret.kind = InterpreterResult::NUMBER;
-    temp_ret.num_val = 15;
-    return temp_ret;
+    return interpreter->return_val;
 }

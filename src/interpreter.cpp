@@ -22,8 +22,10 @@ void Interpreter::execute(const Stmt* stmt) {
 
 void Interpreter::execute(const Stmt *stmt, Environment exec_env) {
     Environment prev(environment);
+
     environment = exec_env;
     stmt->accept(this);
+
     environment = prev;
 }
 
@@ -46,7 +48,9 @@ void Interpreter::visit(const BlockStmt *stmt) {
             execute(inner_statement);
         }
     }
-    catch (std::exception e) {};
+    catch (RuntimeErr err) {
+        Lox::runtime_error(err);
+    };
 
     environment = previous;
 }
@@ -54,6 +58,17 @@ void Interpreter::visit(const BlockStmt *stmt) {
 void Interpreter::visit(const PrintStmt *stmt) {
     InterpreterResult value = evaluate(*(stmt->expression));
     std::cout << InterpreterResult::stringify(value) << std::endl;
+}
+
+void Interpreter::visit(const ReturnStmt* stmt) {
+
+    if (stmt->value) {
+        return_val = evaluate(*stmt->value);
+    } else {
+        InterpreterResult nil_val;
+        nil_val.kind = InterpreterResult::NIL;
+        return_val = nil_val;
+    }
 }
 
 void Interpreter::visit(const WhileStmt *stmt) {
@@ -170,7 +185,7 @@ InterpreterResult Interpreter::visit(const Binary* expr) {
 InterpreterResult Interpreter::visit(const StrLiteral* expr) {
     InterpreterResult result;
     result.str_val = expr->value;
-    result.kind = InterpreterResult::ResultType::STR;
+    result.kind = expr->nil ? InterpreterResult::ResultType::NIL : InterpreterResult::ResultType::STR;
     return result;
 }
 

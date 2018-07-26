@@ -21,5 +21,6 @@ class VarStmt;
 class IfStmt;
 class WhileStmt;
 class FuncStmt;
+class ReturnStmt;
 
 #endif //LOXPP_EXPR_SUBTYPES_HPP

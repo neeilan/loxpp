@@ -46,10 +46,12 @@ protected:
     void visit(const IfStmt*);
     void visit(const WhileStmt*);
     void visit(const FuncStmt*);
+    void visit(const ReturnStmt*);
 
 
 private:
-    friend  class InterpreterResult;
+    friend class InterpreterResult;
+    InterpreterResult return_val;
     Environment environment;
     void execute(const Stmt* stmt);
     void execute(const Stmt* stmt, Environment environment1);

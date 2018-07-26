@@ -44,6 +44,7 @@ Stmt* Parser::var_declaration() {
 Stmt* Parser::statement() {
     if (match({IF})) return if_statement();
     if (match({PRINT})) return print_statement();
+    if (match({RETURN})) return return_statement();
     if (match({WHILE})) return  while_statement();
     if (match({FOR})) return for_statement();
     if (match({LEFT_BRACE})) return block_statement();
@@ -56,6 +57,18 @@ Stmt* Parser::print_statement() {
     Expr* value = expression();
     consume(SEMICOLON, "Expect ';' after value.");
     return new PrintStmt(value);
+}
+
+Stmt* Parser::return_statement() {
+    Token keyword = previous();
+    Expr* value = nullptr;
+
+    if (!check(SEMICOLON)) {
+        value = expression();
+    }
+
+    consume(SEMICOLON, "Expect ';' after return value.");
+    return new ReturnStmt(keyword, value);
 }
 
 Stmt* Parser::block_statement() {
