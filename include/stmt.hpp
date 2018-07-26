@@ -97,5 +97,22 @@ public:
     const Stmt* body;
 };
 
+
+class FuncStmt : public Stmt {
+public:
+    explicit FuncStmt(Token name, std::vector<Token> parameters, std::vector<Stmt*> body)
+            : name(name),
+              parameters(parameters),
+              body(body) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
+
+    const Token name;
+    const std::vector<Token> parameters;
+    const std::vector<Stmt*> body;
+};
+
 #endif
 

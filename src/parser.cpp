@@ -22,6 +22,7 @@ std::vector<Stmt*> Parser::parse() {
 
 
 Stmt* Parser::declaration() {
+    if (match({FUN})) return func_statement("function");
     if (match({VAR})) {
         return var_declaration();
     } else {
@@ -91,6 +92,7 @@ Stmt* Parser::while_statement() {
 
 /*
  * Desugar for-loop into equivalent while-loop.
+ * for-loop syntax: for (init_stmt? ; condition_expr? ; incr_stmt?) stmt;
  */
 Stmt* Parser::for_statement() {
     consume(LEFT_PAREN, "Expect '(' after 'for'.");
@@ -105,7 +107,7 @@ Stmt* Parser::for_statement() {
 
     Expr* condition = nullptr;
 
-    if (!check(SEMICOLON)) { // Ensure this clause hasn't been omitted as in for (stmt;;stmt)
+    if (!check(SEMICOLON)) {
         condition = expression();
     }
 
@@ -120,7 +122,7 @@ Stmt* Parser::for_statement() {
     Stmt* body = statement();
 
 
-    // The actual desugaring
+    // Construct block stmt with initializer + desugared while-loop
     if (increment) {
         body = new BlockStmt({ body, new ExprStmt(increment) });
     }
@@ -136,6 +138,31 @@ Stmt* Parser::for_statement() {
     }
 
     return body;
+}
+
+Stmt* Parser::func_statement(std::string kind) {
+    Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+    consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+
+    std::vector<Token> parameters;
+    if (!check(RIGHT_PAREN)) {
+        do {
+            if (parameters.size() >= 8) {
+                error(peek(), "Cannot have more than 8 parameters.");
+            }
+
+            parameters.push_back(consume(IDENTIFIER, "Expect parameter name."));
+        } while (match({COMMA}));
+    }
+
+    consume(RIGHT_PAREN, "Expect ')' after parameters.");
+
+    consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+
+    std::vector<Stmt*> body;
+    body.push_back(block_statement());
+
+    return new FuncStmt(name, parameters, body);
 }
 
 Stmt* Parser::expression_statement() {
@@ -289,7 +316,46 @@ Expr* Parser::unary() {
         return (new Unary(op, *right));
     }
 
-    return primary();
+    return call();
+}
+
+Expr* Parser::call() {
+    Expr* expr = primary();
+
+    while (true) {
+        if (match({LEFT_PAREN})) {
+            /*
+             * At this point, everything to left is the callee,
+             * so as soon as '(' is seen, try to complete the call
+             * expr (or sequence of call exprs). If there is a sequence,
+             * all previous calls will become part of the (new) callee.
+             *
+             * ex - returns_fn()also_returns_fn(arg)returns_val();
+             */
+            expr = finish_call(expr);
+        } else {
+            break;
+        }
+    }
+
+    return expr;
+}
+
+Expr* Parser::finish_call(Expr* callee) {
+    std::vector<Expr*> args;
+
+    if (!check(RIGHT_PAREN)) {
+        do {
+            if (args.size() >= 8) {
+                error(peek(), "Cannot have more than 8 arguments.");
+            }
+            args.push_back(expression());
+        } while (match({COMMA}));
+    }
+
+    Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
+
+    return new Call(*callee, paren, args);
 }
 
 Expr* Parser::primary() {

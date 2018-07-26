@@ -42,6 +42,8 @@ private:
     Expr* addition();
     Expr* multiplication();
     Expr* unary();
+    Expr* call();
+    Expr *finish_call(Expr *caller);
     Expr* primary();
 
     Stmt* declaration();
@@ -53,6 +55,7 @@ private:
     Stmt* if_statement();
     Stmt* while_statement();
     Stmt* for_statement();
+    Stmt* func_statement(std::string kind);
 
     ParseErr error(Token token, std::string msg);
     void synchronize();

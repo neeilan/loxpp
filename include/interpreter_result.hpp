@@ -2,11 +2,15 @@
 #define LOXPP_INTERPRETER_RESULT_HPP
 
 #include <string>
+#include "visitable_types.hpp"
+#include "interpreter.h"
+
+class Interpreter;
 
 class InterpreterResult {
 public:
     enum ResultType {
-        STR, NUMBER, NIL, BOOL
+        STR, NUMBER, NIL, BOOL, FUNCTION
     };
 
     static std::string stringify(InterpreterResult&);
@@ -15,6 +19,13 @@ public:
     std::string str_val;
     double num_val;
     bool bool_val;
+
+    bool callable = false;
+    int arity;
+    const FuncStmt* function;
+
+    virtual InterpreterResult call(Interpreter* interpreter,
+                                   std::vector<InterpreterResult> args);
 
 };
 

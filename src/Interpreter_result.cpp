@@ -47,3 +47,19 @@ std::string InterpreterResult::stringify(InterpreterResult &result) {
 
     return "Unable to stringify InterpretedResult";
 }
+
+InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<InterpreterResult> args) {
+    Environment environment(interpreter->globals);
+    for (int i = 0; i < function->parameters.size(); i++) {
+        environment.define(function->parameters[i].lexeme, args[i]);
+    }
+
+    BlockStmt* body = new BlockStmt(function->body);
+    interpreter->execute(body, environment);
+    delete body;
+
+    InterpreterResult temp_ret;
+    temp_ret.kind = InterpreterResult::NUMBER;
+    temp_ret.num_val = 15;
+    return temp_ret;
+}

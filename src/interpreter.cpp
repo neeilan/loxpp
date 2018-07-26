@@ -6,7 +6,6 @@
 #include "expr.hpp"
 #include "lox.hpp"
 
-
 void Interpreter::interpret(const std::vector<Stmt*>& statements) {
     try {
         for (const Stmt* stmt : statements) {
@@ -19,6 +18,13 @@ void Interpreter::interpret(const std::vector<Stmt*>& statements) {
 
 void Interpreter::execute(const Stmt* stmt) {
     stmt->accept(this);
+}
+
+void Interpreter::execute(const Stmt *stmt, Environment exec_env) {
+    Environment prev(environment);
+    environment = exec_env;
+    stmt->accept(this);
+    environment = prev;
 }
 
 void Interpreter::visit(const VarStmt *stmt) {
@@ -54,6 +60,15 @@ void Interpreter::visit(const WhileStmt *stmt) {
     while(is_truthy(evaluate(*stmt->condition))) {
         execute(stmt->body);
     }
+}
+
+void Interpreter::visit(const FuncStmt *stmt) {
+    InterpreterResult result;
+    result.function = stmt;
+    result.kind = InterpreterResult::ResultType::FUNCTION;
+    result.arity = stmt->parameters.size();
+    result.callable = true;
+    environment.define(stmt->name.lexeme, result);
 }
 
 InterpreterResult Interpreter::evaluate(const Expr &expr) {
@@ -219,6 +234,28 @@ InterpreterResult Interpreter::visit(const Logical *expr) {
     }
 
     return evaluate(expr->right);
+}
+
+InterpreterResult Interpreter::visit(const Call *expr) {
+    InterpreterResult callee = evaluate(expr->callee);
+
+    if (!callee.callable) {
+        throw RuntimeErr(expr->paren, "Can only call functions and classes.");
+    }
+
+    std::vector<InterpreterResult> args;
+
+    for (Expr* arg : expr->args) {
+        args.push_back(evaluate(*arg));
+    }
+
+    if (args.size() != callee.arity) {
+        throw RuntimeErr(expr->paren,
+                         "Expected " + std::to_string(callee.arity)
+                         + " arguments but got " + std::to_string(args.size()) + ".");
+    }
+
+    return callee.call(this, args);
 }
 
 bool Interpreter::is_truthy(const InterpreterResult &expr) {

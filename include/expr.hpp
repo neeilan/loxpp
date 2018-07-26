@@ -7,12 +7,14 @@
 #include "visitor.h"
 
 #include <string>
+#include <vector>
 
 class Expr {
 public:
     virtual std::string accept(ExprVisitor<std::string>* visitor) const = 0;
     virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const = 0;
     virtual bool lvalue() const { return false; }
+    virtual bool callable() const { return false; }
     virtual ~Expr() {};
 };
 
@@ -176,6 +178,26 @@ public:
     const Expr& left;
     const Token op;
     const Expr& right;
+};
+
+class Call : public Expr {
+public:
+    Call(Expr& callee, Token paren, std::vector<Expr*> args)
+            : callee(callee),
+              paren(paren),
+              args(args) {}
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    const Expr& callee;
+    const Token paren;
+    const std::vector<Expr*> args;
 };
 
 #endif

@@ -11,6 +11,7 @@ class BoolLiteral;
 class Variable;
 class Assignment;
 class Logical;
+class Call;
 
 class Stmt;
 class ExprStmt;
@@ -19,5 +20,6 @@ class PrintStmt;
 class VarStmt;
 class IfStmt;
 class WhileStmt;
+class FuncStmt;
 
 #endif //LOXPP_EXPR_SUBTYPES_HPP
