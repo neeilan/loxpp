@@ -1,4 +1,5 @@
 #include <iostream>
+#include <return.hpp>
 
 #include "interpreter.h"
 #include "interpreter_result.hpp"
@@ -20,18 +21,23 @@ void Interpreter::execute(const Stmt* stmt) {
     stmt->accept(this);
 }
 
-void Interpreter::execute(const Stmt *stmt, Environment exec_env) {
-    Environment prev(environment);
+void Interpreter::execute(const Stmt *stmt, Environment* exec_env) {
+    Environment* prev = environment;
 
     environment = exec_env;
-    stmt->accept(this);
+    try {
+        stmt->accept(this);
+    } catch (Return) {
+        environment = prev;
+        return;
+    }
 
     environment = prev;
 }
 
 void Interpreter::visit(const VarStmt *stmt) {
     InterpreterResult value = evaluate(*stmt->expression);
-    environment.define(stmt->name.lexeme, value);
+    environment->define(stmt->name.lexeme, value);
 }
 
 void Interpreter::visit(const ExprStmt *stmt) {
@@ -39,10 +45,10 @@ void Interpreter::visit(const ExprStmt *stmt) {
 }
 
 void Interpreter::visit(const BlockStmt *stmt) {
-    Environment previous = environment;
+    Environment* previous = environment;
 
     try {
-        environment = Environment(&previous);
+        environment = new Environment(previous);
 
         for (const Stmt* inner_statement : stmt->block_contents) {
             execute(inner_statement);
@@ -52,6 +58,7 @@ void Interpreter::visit(const BlockStmt *stmt) {
         Lox::runtime_error(err);
     };
 
+    delete environment;
     environment = previous;
 }
 
@@ -69,6 +76,7 @@ void Interpreter::visit(const ReturnStmt* stmt) {
         nil_val.kind = InterpreterResult::NIL;
         return_val = nil_val;
     }
+    throw Return();
 }
 
 void Interpreter::visit(const WhileStmt *stmt) {
@@ -83,7 +91,7 @@ void Interpreter::visit(const FuncStmt *stmt) {
     result.kind = InterpreterResult::ResultType::FUNCTION;
     result.arity = stmt->parameters.size();
     result.callable = true;
-    environment.define(stmt->name.lexeme, result);
+    environment->define(stmt->name.lexeme, result);
 }
 
 InterpreterResult Interpreter::evaluate(const Expr &expr) {
@@ -230,12 +238,12 @@ InterpreterResult Interpreter::visit(const Unary* expr) {
 }
 
 InterpreterResult Interpreter::visit(const Variable *expr) {
-    return environment.get(expr->name);
+    return environment->get(expr->name);
 }
 
 InterpreterResult Interpreter::visit(const Assignment *expr) {
     InterpreterResult value = evaluate(expr->value);
-    environment.assign(expr->name, value);
+    environment->assign(expr->name, value);
     return value; // Allows for statements like: print a = 2; -> "2"
 }
 
@@ -299,6 +307,8 @@ bool Interpreter::is_equal(const InterpreterResult &left, const InterpreterResul
             return left.str_val == right.str_val;
         case InterpreterResult::ResultType::NUMBER:
             return left.num_val == right.num_val;
+        case InterpreterResult::ResultType::FUNCTION:
+            return left.function == right.function;
         default:
             throw std::runtime_error("Unknown InterpreterResult kind"); // unreachable
     }

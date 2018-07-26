@@ -28,7 +28,7 @@ public:
     InterpreterResult get(Token name);
 
 private:
-    Environment* enclosing;
+    Environment* enclosing = nullptr;
     std::map<std::string, InterpreterResult> values;
 };
 

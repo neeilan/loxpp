@@ -18,9 +18,9 @@ inline bool ends_with(const std::string& s, const std::string& ending) {
 
 
 std::string InterpreterResult::stringify(InterpreterResult &result) {
-    if (result.kind == InterpreterResult::ResultType::NIL) return "nil";
+    if (result.kind == ResultType::NIL) return "nil";
 
-    if (result.kind == InterpreterResult::ResultType::NUMBER) {
+    if (result.kind == ResultType::NUMBER) {
 
         std::ostringstream text_strm;
 
@@ -38,22 +38,26 @@ std::string InterpreterResult::stringify(InterpreterResult &result) {
         return text;
     }
 
-    if (result.kind == InterpreterResult::ResultType::STR) {
+    if (result.kind == ResultType::STR) {
         return result.str_val;
     }
 
-    if (result.kind == InterpreterResult::ResultType::BOOL) {
+    if (result.kind == ResultType::BOOL) {
         return result.bool_val ? "true" : "false";
+    }
+
+    if (result.kind == ResultType::FUNCTION) {
+        return "<fn " + result.function->name.lexeme + ">";
     }
 
     return "Unable to stringify InterpretedResult";
 }
 
 InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<InterpreterResult> args) {
-    Environment call_env(&interpreter->globals);
+    Environment* call_env =  new Environment(&interpreter->globals);
 
     for (int i = 0; i < function->parameters.size(); i++) {
-        call_env.define(function->parameters[i].lexeme, args[i]);
+        call_env->define(function->parameters[i].lexeme, args[i]);
     }
 
 

@@ -24,7 +24,6 @@ class Interpreter : public ExprVisitor<InterpreterResult>, public StmtVisitor {
 public:
     void interpret(const std::vector<Stmt*>& statements);
     ~Interpreter() {}
-    Environment globals;
 
 
 protected:
@@ -51,10 +50,13 @@ protected:
 
 private:
     friend class InterpreterResult;
+
+    Environment globals;
+    Environment* environment = &globals;
+
     InterpreterResult return_val;
-    Environment environment;
     void execute(const Stmt* stmt);
-    void execute(const Stmt* stmt, Environment environment1);
+    void execute(const Stmt* stmt, Environment* environment1);
     InterpreterResult evaluate(const Expr& expr);
     bool is_truthy(const InterpreterResult& expr);
     bool is_equal(const InterpreterResult& left, const InterpreterResult& right);
