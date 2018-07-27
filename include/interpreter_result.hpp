@@ -15,7 +15,7 @@ public:
     };
 
     static std::string stringify(InterpreterResult&);
-
+    
     ResultType kind = NIL;
     std::string str_val;
     double num_val;

@@ -10,7 +10,7 @@ void Environment::define(std::string name, InterpreterResult &value) {
     values[name] = value;
 }
 
-InterpreterResult Environment::get(Token name) {
+InterpreterResult Environment::get(const Token name) {
     if (values.count(name.lexeme) > 0) {
         return values[name.lexeme];
     }
@@ -20,6 +20,25 @@ InterpreterResult Environment::get(Token name) {
     }
 
     throw RuntimeErr(name, "Undefined variable '" + name.lexeme + "'.");
+}
+
+InterpreterResult Environment::get_at(int distance, const Token name) {
+    return (ancestor(distance)->values)[name.lexeme];
+}
+
+void Environment::assign_at(int distance, const Token name, InterpreterResult value) {
+    ancestor(distance)->values.at(name.lexeme) = value;
+}
+
+Environment* Environment::ancestor(int distance) {
+//    if (distance == 0) return this;
+
+    Environment* curr_environment = this;
+    for (int i = 0; i < distance; i++) {
+        curr_environment = curr_environment->enclosing;
+    }
+
+    return curr_environment;
 }
 
 void Environment::assign(const Token name, InterpreterResult &value) {

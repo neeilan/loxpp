@@ -11,6 +11,7 @@
 
 class Expr {
 public:
+    virtual void accept(ExprVisitor<void>* visitor) const = 0;
     virtual std::string accept(ExprVisitor<std::string>* visitor) const = 0;
     virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const = 0;
     virtual bool lvalue() const { return false; }
@@ -23,6 +24,10 @@ class Binary : public Expr {
 public:
     Binary(Expr& left, Token op, Expr& right)
             : left(left), op(op), right(right) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
 
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
@@ -42,6 +47,10 @@ class Grouping : public Expr {
 public:
     explicit Grouping(Expr& expression) : expression(expression) {}
 
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
@@ -59,6 +68,10 @@ public:
             value(value),
             nil(nil)
     {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
 
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
@@ -79,6 +92,10 @@ public:
             nil(nil)
     {}
 
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
@@ -94,6 +111,10 @@ public:
 class BoolLiteral : public Expr {
 public:
     explicit  BoolLiteral(bool value) : value(value) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
 
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
@@ -112,6 +133,10 @@ public:
     Unary(Token op, Expr& right)
             : op(op), right(right) {}
 
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
@@ -128,6 +153,10 @@ class Variable : public Expr {
 public:
     Variable(Token name)
             : name(name) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
 
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
@@ -146,6 +175,10 @@ class Assignment : public Expr {
 public:
     Assignment(Token name, Expr& value)
             : name(name), value(value) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
 
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
@@ -167,6 +200,10 @@ public:
               op(op),
               right(right) {}
 
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);
     }
@@ -186,6 +223,10 @@ public:
             : callee(callee),
               paren(paren),
               args(args) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
 
     virtual std::string accept(ExprVisitor<std::string>* visitor) const {
         return visitor->visit(this);

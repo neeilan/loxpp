@@ -7,6 +7,10 @@
 #include "expr.hpp"
 #include "lox.hpp"
 
+void Interpreter::resolve(const Expr *expr, int depth) {
+    locals[expr] = depth;
+}
+
 void Interpreter::interpret(const std::vector<Stmt*>& statements) {
     try {
         for (const Stmt* stmt : statements) {
@@ -21,12 +25,14 @@ void Interpreter::execute(const Stmt* stmt) {
     stmt->accept(this);
 }
 
-void Interpreter::execute(const Stmt *stmt, Environment* exec_env) {
+void Interpreter::execute(const std::vector<Stmt*> stmts, Environment* exec_env) {
     Environment* prev = environment;
 
     environment = exec_env;
+
     try {
-        stmt->accept(this);
+        for (const Stmt* stmt : stmts)
+            stmt->accept(this);
     } catch (Return) {
         environment = prev;
         return;
@@ -47,9 +53,9 @@ void Interpreter::visit(const ExprStmt *stmt) {
 void Interpreter::visit(const BlockStmt *stmt) {
     Environment* previous = environment;
 
-    try {
-        environment = new Environment(previous);
+    environment = new Environment(previous);
 
+    try {
         for (const Stmt* inner_statement : stmt->block_contents) {
             execute(inner_statement);
         }
@@ -58,7 +64,7 @@ void Interpreter::visit(const BlockStmt *stmt) {
         Lox::runtime_error(err);
     };
 
-    delete environment;
+    //delete environment;
     environment = previous;
 }
 
@@ -239,12 +245,20 @@ InterpreterResult Interpreter::visit(const Unary* expr) {
 }
 
 InterpreterResult Interpreter::visit(const Variable *expr) {
-    return environment->get(expr->name);
+    return lookup_variable(expr->name, expr);
 }
 
 InterpreterResult Interpreter::visit(const Assignment *expr) {
     InterpreterResult value = evaluate(expr->value);
-    environment->assign(expr->name, value);
+
+    if (locals.count(expr) == 0) {
+        globals.assign(expr->name, value);
+    } else {
+        int distance = locals[expr];
+        environment->assign_at(distance, expr->name, value);
+    }
+
+
     return value; // Allows for statements like: print a = 2; -> "2"
 }
 
@@ -327,4 +341,14 @@ void Interpreter::check_numeric_operands(const Token op, const InterpreterResult
     if (left.kind != InterpreterResult::ResultType ::NUMBER
         || right.kind != InterpreterResult::ResultType::NUMBER)
         throw RuntimeErr(op, "Operands must be a number");
+}
+
+InterpreterResult Interpreter::lookup_variable(const Token name, const Expr *expr) {
+    if (locals.count(expr) == 0) {
+        return globals.get(name);
+    }
+
+    int distance = locals[expr];
+    return environment->get_at(distance, name);
+
 }

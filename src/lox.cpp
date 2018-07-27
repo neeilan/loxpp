@@ -12,6 +12,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <resolver.hpp>
 
 #include "ast_printer.hpp"
 
@@ -49,10 +50,10 @@ void Lox::run(const std::string& source) {
     Scanner scanner(source);
     const std::vector<Token> tokens = scanner.scan_tokens();
 
-    // Print the tokens for now
-    for (const Token& token : tokens) {
-        std::cout << token.str();
-    }
+//    // Print the tokens for now
+//    for (const Token& token : tokens) {
+//        std::cout << token.str();
+//    }
 
     Parser parser(tokens);
     std::vector<Stmt*> statements = parser.parse();
@@ -61,6 +62,10 @@ void Lox::run(const std::string& source) {
 
     std::cout << "Interpreter output:" << std::endl;
     Interpreter interpreter;
+
+    Resolver resolver(&interpreter);
+    resolver.resolve(statements);
+
     interpreter.interpret(statements);
 
 }

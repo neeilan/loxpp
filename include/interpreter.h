@@ -1,6 +1,7 @@
 #ifndef LOXPP_INTERPRETER_H
 #define LOXPP_INTERPRETER_H
 
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -23,6 +24,7 @@ public:
 class Interpreter : public ExprVisitor<InterpreterResult>, public StmtVisitor {
 public:
     void interpret(const std::vector<Stmt*>& statements);
+    void resolve(const Expr* expr, int depth);
     ~Interpreter() {}
 
 
@@ -53,10 +55,12 @@ private:
 
     Environment globals;
     Environment* environment = &globals;
+    std::map<const Expr*, int> locals;
+    InterpreterResult lookup_variable(const Token name, const Expr* expr);
 
     InterpreterResult return_val;
     void execute(const Stmt* stmt);
-    void execute(const Stmt* stmt, Environment* environment1);
+    void execute(const std::vector<Stmt*> stmts, Environment* environment1);
     InterpreterResult evaluate(const Expr& expr);
     bool is_truthy(const InterpreterResult& expr);
     bool is_equal(const InterpreterResult& left, const InterpreterResult& right);

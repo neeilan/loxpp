@@ -61,11 +61,13 @@ InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<
     }
 
 
-    BlockStmt* body = new BlockStmt(function->body);
+//    BlockStmt* body = new BlockStmt(function->body);
 
 
-    interpreter->execute(body, call_env);
-    delete body;
+    interpreter->execute(function->body, call_env);
+
+//    delete body;
+    //delete call_env;
 
     return interpreter->return_val;
 }
