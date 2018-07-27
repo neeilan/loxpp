@@ -54,7 +54,7 @@ std::string InterpreterResult::stringify(InterpreterResult &result) {
 }
 
 InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<InterpreterResult> args) {
-    Environment* call_env =  new Environment(&interpreter->globals);
+    Environment* call_env = new Environment(closure);
 
     for (int i = 0; i < function->parameters.size(); i++) {
         call_env->define(function->parameters[i].lexeme, args[i]);

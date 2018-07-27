@@ -8,7 +8,7 @@
 #include "interpreter_result.hpp"
 #include "token.hpp"
 
-class Environment;
+class InterpreterResult;
 
 class Environment {
 public:

@@ -4,6 +4,7 @@
 #include <string>
 #include "visitable_types.hpp"
 #include "interpreter.h"
+#include "environment.hpp"
 
 class Interpreter;
 
@@ -23,6 +24,7 @@ public:
     bool callable = false;
     int arity;
     const FuncStmt* function;
+    Environment* closure = nullptr;
 
     virtual InterpreterResult call(Interpreter* interpreter,
                                    std::vector<InterpreterResult> args);

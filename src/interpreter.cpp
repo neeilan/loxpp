@@ -90,6 +90,7 @@ void Interpreter::visit(const FuncStmt *stmt) {
     result.function = stmt;
     result.kind = InterpreterResult::ResultType::FUNCTION;
     result.arity = stmt->parameters.size();
+    result.closure = environment;
     result.callable = true;
     environment->define(stmt->name.lexeme, result);
 }
