@@ -15,13 +15,14 @@
 #include "environment.hpp"
 
 using std::shared_ptr;
+using std::vector;
 
-class Interpreter : public ExprVisitor<shared_ptr<InterpreterResult> >, public StmtVisitor {
+class Interpreter : public ExprVisitor<shared_ptr<InterpreterResult>>,
+                    public StmtVisitor {
 public:
-    void interpret(const std::vector<Stmt*>& statements);
+    void interpret(const vector<Stmt*>& statements);
     void resolve(const Expr* expr, int depth);
     ~Interpreter() {}
-
 
 protected:
     shared_ptr<InterpreterResult> visit(const Binary* expr);
@@ -47,28 +48,30 @@ protected:
     void visit(const FuncStmt*);
     void visit(const ReturnStmt*);
 
-
 private:
     friend class InterpreterResult;
 
     Environment<shared_ptr<InterpreterResult> > globals;
-    Environment<shared_ptr<InterpreterResult> > * environment = &globals;
+    Environment<shared_ptr<InterpreterResult> >* environment = &globals;
 
     std::map<const Expr*, int> locals;
 
     shared_ptr<InterpreterResult> return_val;
 
     void execute(const Stmt* stmt);
-    void execute(const std::vector<Stmt*> stmts, Environment<shared_ptr<InterpreterResult> >* environment1);
+    void execute(const vector<Stmt*> stmts,
+                 Environment<shared_ptr<InterpreterResult> >* environment1);
 
     shared_ptr<InterpreterResult> evaluate(const Expr& expr);
-    shared_ptr<InterpreterResult> lookup_variable(const Token name, const Expr* expr);
+    shared_ptr<InterpreterResult> lookup_variable(const Token name,
+                                                  const Expr* expr);
 
     bool is_truthy(const InterpreterResult& expr);
     bool is_equal(const InterpreterResult& left, const InterpreterResult& right);
 
     void check_numeric_operand(const Token op, const InterpreterResult& right);
-    void check_numeric_operands(const Token op, const InterpreterResult& left, const InterpreterResult& right);
+    void check_numeric_operands(const Token op, const InterpreterResult& left,
+                                const InterpreterResult& right);
 };
 
-#endif //LOXPP_INTERPRETER_H
+#endif // LOXPP_INTERPRETER_H

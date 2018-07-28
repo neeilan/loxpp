@@ -1,72 +1,60 @@
 #include <memory>
 #include <sstream>
-#include <string>
 #include <iomanip>
 #include <iostream>
 
 #include "interpreter.h"
-#include "interpreter_result.hpp"
-#include "runtime_err.hpp"
-#include "expr.hpp"
-#include "lox.hpp"
 
 using std::shared_ptr;
 
-
 int DOUBLE_PRECISION = 4;
 
-inline bool ends_with(const std::string& s, const std::string& ending) {
-    if (ending.size() > s.size()) return false;
+inline bool ends_with(const std::string& s, const std::string& ending)
+{
+    if (ending.size() > s.size())
+        return false;
     return std::equal(ending.rbegin(), ending.rend(), s.rbegin());
 }
 
+std::string InterpreterResult::stringify(InterpreterResult& result)
+{
+    switch (result.kind) {
+        case NIL:
+            return "nil";
+        case STR:
+            return result.str_val;
+        case BOOL:
+            return result.bool_val ? "true" : "false";
+        case FUNCTION:
+            return "<fn " + result.function->name.lexeme + ">";
+        case CLASS:
+            return "<class " + result.name + ">";
+        case INSTANCE:
+            return "<" + (result.klass)->name + " instance>";
+        case NUMBER: {
+            std::ostringstream text_strm;
 
-std::string InterpreterResult::stringify(InterpreterResult &result) {
-    if (result.kind == ResultType::NIL) return "nil";
+            text_strm << std::fixed << std::setprecision(DOUBLE_PRECISION)
+                      << result.num_val;
 
-    if (result.kind == ResultType::NUMBER) {
+            const std::string text(text_strm.str());
 
-        std::ostringstream text_strm;
+            const std::string trailing_zeros(DOUBLE_PRECISION, '0');
 
-        text_strm << std::fixed
-                  << std::setprecision(DOUBLE_PRECISION)
-                  << result.num_val;
+            if (ends_with(text, trailing_zeros))
+                return text.substr(0, text.size() - (DOUBLE_PRECISION + 1));
 
-        const std::string text(text_strm.str());
-
-        const std::string trailing_zeros(DOUBLE_PRECISION, '0');
-
-        if (ends_with(text, trailing_zeros))
-            return text.substr(0, text.size() - (DOUBLE_PRECISION + 1));
-
-        return text;
+            return text;
+        }
+        default:
+            return "Unable to stringify InterpretedResult";
     }
-
-    if (result.kind == ResultType::STR) {
-        return result.str_val;
-    }
-
-    if (result.kind == ResultType::BOOL) {
-        return result.bool_val ? "true" : "false";
-    }
-
-    if (result.kind == ResultType::FUNCTION) {
-        return "<fn " + result.function->name.lexeme + ">";
-    }
-
-    if (result.kind == ResultType::CLASS) {
-        return "<class " + result.name + ">";
-    }
-
-    if (result.kind == ResultType::INSTANCE) {
-        return "<" + (result.klass)->name + " instance>";
-    }
-
-    return "Unable to stringify InterpretedResult";
 }
 
-shared_ptr<InterpreterResult> InterpreterResult::call(Interpreter *interpreter, std::vector<shared_ptr<InterpreterResult> > args) {
-
+shared_ptr<InterpreterResult> InterpreterResult::call(
+        Interpreter* interpreter,
+        std::vector<shared_ptr<InterpreterResult> > args)
+{
     if (kind == ResultType::CLASS) {
         auto instance = std::make_shared<InterpreterResult>();
         instance->kind = ResultType::INSTANCE;
@@ -74,7 +62,7 @@ shared_ptr<InterpreterResult> InterpreterResult::call(Interpreter *interpreter, 
         return instance;
     }
 
-    Environment< shared_ptr<InterpreterResult> >* call_env = new Environment<shared_ptr<InterpreterResult> >(closure);
+    Environment<shared_ptr<InterpreterResult> >* call_env = new Environment<shared_ptr<InterpreterResult> >(closure);
 
     for (int i = 0; i < function->parameters.size(); i++) {
         call_env->define(function->parameters[i].lexeme, args[i]);
@@ -85,7 +73,8 @@ shared_ptr<InterpreterResult> InterpreterResult::call(Interpreter *interpreter, 
     return interpreter->return_val;
 }
 
-shared_ptr<InterpreterResult> InterpreterResult::get(Token property) {
+shared_ptr<InterpreterResult> InterpreterResult::get(Token property)
+{
     if (fields.count(property.lexeme) > 0) {
         return fields[property.lexeme];
     }
@@ -93,6 +82,8 @@ shared_ptr<InterpreterResult> InterpreterResult::get(Token property) {
     throw RuntimeErr(property, "Undefined property '" + property.lexeme + "' in class " + klass->name + ".");
 }
 
-void InterpreterResult::set(Token property, shared_ptr<InterpreterResult> value) {
+void InterpreterResult::set(Token property,
+                            shared_ptr<InterpreterResult> value)
+{
     fields[property.lexeme] = value;
 }

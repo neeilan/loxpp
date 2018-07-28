@@ -9,7 +9,6 @@
 #include "environment.hpp"
 
 
-
 using std::shared_ptr;
 
 class Interpreter;

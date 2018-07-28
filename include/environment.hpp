@@ -12,21 +12,26 @@ template <class T>
 class Environment {
 public:
     explicit Environment()
-            : enclosing(nullptr) {};
+            : enclosing(nullptr){};
 
     explicit Environment(Environment* enclosing)
-            : enclosing(enclosing) {}
+            : enclosing(enclosing)
+    {
+    }
 
-    Environment(const Environment& env) {
+    Environment(const Environment& env)
+    {
         this->enclosing = env.enclosing;
         this->values = env.values;
     }
 
-    void define(std::string name, const T value) {
+    void define(std::string name, const T value)
+    {
         values[name] = value;
     }
 
-    void assign(const Token name, const T value) {
+    void assign(const Token name, const T value)
+    {
         if (values.count(name.lexeme) > 0) {
             values[name.lexeme] = value;
             return;
@@ -40,7 +45,8 @@ public:
         throw RuntimeErr(name, "Undefined assignment target '" + name.lexeme + "'.");
     }
 
-    T get(const Token name) {
+    T get(const Token name)
+    {
         if (values.count(name.lexeme) > 0) {
             return values[name.lexeme];
         }
@@ -52,11 +58,13 @@ public:
         throw RuntimeErr(name, "Undefined variable '" + name.lexeme + "'.");
     }
 
-    T get_at(int distance, const Token name) {
+    T get_at(int distance, const Token name)
+    {
         return (ancestor(distance)->values)[name.lexeme];
     }
 
-    void assign_at(int distance, const Token name, const T value) {
+    void assign_at(int distance, const Token name, const T value)
+    {
         ancestor(distance)->values.at(name.lexeme) = value;
     }
 
@@ -64,7 +72,8 @@ private:
     Environment<T>* enclosing = nullptr;
     std::map<std::string, T> values;
 
-    Environment* ancestor(int distance) {
+    Environment* ancestor(int distance)
+    {
 
         Environment<T>* curr_environment = this;
 
