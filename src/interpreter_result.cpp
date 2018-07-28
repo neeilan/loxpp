@@ -50,10 +50,26 @@ std::string InterpreterResult::stringify(InterpreterResult &result) {
         return "<fn " + result.function->name.lexeme + ">";
     }
 
+    if (result.kind == ResultType::CLASS) {
+        return "<class " + result.name + ">";
+    }
+
+    if (result.kind == ResultType::INSTANCE) {
+        return "<" + (result.klass)->name + " instance>";
+    }
+
     return "Unable to stringify InterpretedResult";
 }
 
 InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<InterpreterResult> args) {
+
+    if (kind == ResultType::CLASS) {
+        InterpreterResult instance;
+        instance.kind = ResultType::INSTANCE;
+        instance.klass = class_def;
+        return instance;
+    }
+
     Environment* call_env = new Environment(closure);
 
     for (int i = 0; i < function->parameters.size(); i++) {
@@ -70,4 +86,16 @@ InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<
     //delete call_env;
 
     return interpreter->return_val;
+}
+
+InterpreterResult InterpreterResult::get(Token property) {
+    if (fields.count(property.lexeme) > 0) {
+        return fields[property.lexeme];
+    }
+
+    throw RuntimeErr(property, "Undefined property '" + property.lexeme + "' in class " + klass->name + ".");
+}
+
+void InterpreterResult::set(Token property, InterpreterResult value) {
+    fields[property.lexeme] = value;
 }

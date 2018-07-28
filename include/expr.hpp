@@ -15,6 +15,7 @@ public:
     virtual std::string accept(ExprVisitor<std::string>* visitor) const = 0;
     virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const = 0;
     virtual bool lvalue() const { return false; }
+    virtual bool is_object_field() const { return false; }
     virtual bool callable() const { return false; }
     virtual ~Expr() {};
 };
@@ -239,6 +240,54 @@ public:
     const Expr& callee;
     const Token paren;
     const std::vector<Expr*> args;
+};
+
+class Get : public Expr {
+public:
+    Get(Expr& callee, Token name)
+            : callee(callee),
+              name(name) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual bool is_object_field() const { return true; }
+
+    Expr& callee;
+    const Token name;
+};
+
+class Set : public Expr {
+public:
+    Set(Expr& callee, Token name, Expr& value)
+            : callee(callee),
+              name(name),
+              value(value) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    Expr& callee;
+    const Token name;
+    const Expr& value;
 };
 
 #endif

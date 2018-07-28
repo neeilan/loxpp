@@ -3,7 +3,6 @@
 
 #include "interpreter.h"
 #include "interpreter_result.hpp"
-#include "interpreter_consts.hpp"
 #include "expr.hpp"
 #include "lox.hpp"
 
@@ -44,6 +43,24 @@ void Interpreter::execute(const std::vector<Stmt*> stmts, Environment* exec_env)
 void Interpreter::visit(const VarStmt *stmt) {
     InterpreterResult value = evaluate(*stmt->expression);
     environment->define(stmt->name.lexeme, value);
+}
+
+void Interpreter::visit(const ClassStmt *stmt) {
+    InterpreterResult sentinel;
+    sentinel.kind = InterpreterResult::ResultType::NIL;
+
+    // Allows references to the class inside its own methods
+    environment->define(stmt->name.lexeme, sentinel);
+
+    InterpreterResult* klass = new InterpreterResult();
+    klass->kind = InterpreterResult::ResultType::CLASS;
+    klass->name = stmt->name.lexeme;
+    klass->callable = true; // constructor
+    klass->arity = 0;
+    klass->class_def = klass;
+
+
+    environment->assign(stmt->name, *klass);
 }
 
 void Interpreter::visit(const ExprStmt *stmt) {
@@ -294,6 +311,29 @@ InterpreterResult Interpreter::visit(const Call *expr) {
     }
 
     return callee.call(this, args);
+}
+
+InterpreterResult Interpreter::visit(const Get *expr) {
+    InterpreterResult callee = evaluate(expr->callee);
+
+    if (callee.kind == InterpreterResult::ResultType::INSTANCE) {
+        return callee.get(expr->name);
+    }
+
+    throw new RuntimeErr(expr->name, "Only instances have properties.");
+}
+
+InterpreterResult Interpreter::visit(const Set *expr) {
+    InterpreterResult object = evaluate(expr->callee);
+
+    if (!object.kind == InterpreterResult::ResultType::INSTANCE) {
+        throw new RuntimeErr(expr->name, "Only instances have fields.");
+    }
+
+    InterpreterResult value = evaluate(expr->value);
+
+    object.set(expr->name, value);
+    return value;
 }
 
 bool Interpreter::is_truthy(const InterpreterResult &expr) {

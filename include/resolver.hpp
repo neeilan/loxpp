@@ -33,11 +33,14 @@ private:
     void visit(const Assignment* expr);
     void visit(const Logical* expr);
     void visit(const Call* expr);
+    void visit(const Get* expr);
+    void visit(const Set* expr);
 
     void visit(const BlockStmt*);
     void visit(const ExprStmt*);
     void visit(const PrintStmt*);
     void visit(const VarStmt*);
+    void visit(const ClassStmt*);
     void visit(const IfStmt*);
     void visit(const WhileStmt*);
     void visit(const FuncStmt*);

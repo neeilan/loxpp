@@ -12,12 +12,15 @@ class Variable;
 class Assignment;
 class Logical;
 class Call;
+class Get;
+class Set;
 
 class Stmt;
 class ExprStmt;
 class BlockStmt;
 class PrintStmt;
 class VarStmt;
+class ClassStmt;
 class IfStmt;
 class WhileStmt;
 class FuncStmt;

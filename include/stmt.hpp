@@ -129,5 +129,20 @@ public:
 };
 
 
+class ClassStmt : public Stmt {
+public:
+    explicit ClassStmt(Token name, std::vector<Stmt*> methods)
+            : name(name),
+              functions(functions) {}
+
+    virtual void accept(StmtVisitor *visitor) const {
+        visitor->visit(this);
+    }
+
+    const Token name;
+    const std::vector<Stmt*> functions;
+};
+
+
 #endif
 

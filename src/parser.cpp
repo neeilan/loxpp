@@ -23,6 +23,7 @@ std::vector<Stmt*> Parser::parse() {
 
 Stmt* Parser::declaration() {
     if (match({FUN})) return func_statement("function");
+    if (match({CLASS})) return class_declaration();
     if (match({VAR})) {
         return var_declaration();
     } else {
@@ -39,6 +40,21 @@ Stmt* Parser::var_declaration() {
     }
     consume(SEMICOLON, "Expect ';' after variable declaration.");
     return new VarStmt(name, initializer);
+}
+
+Stmt* Parser::class_declaration() {
+    Token name = consume(IDENTIFIER, "Expect class name.");
+    consume(LEFT_BRACE, "Expect '{' before class body.");
+
+    std::vector<Stmt*> methods;
+
+    while (!check(RIGHT_BRACE) && !at_end()) {
+        methods.push_back(func_statement("method"));
+    }
+
+    consume(RIGHT_BRACE, "Expect '}' after class body.");
+
+    return new ClassStmt(name, methods);
 }
 
 Stmt* Parser::statement() {
@@ -203,6 +219,9 @@ Expr* Parser::assignment() {
         if (expr->lvalue()) {
             Variable* variable = dynamic_cast<Variable*>(expr);
             return new Assignment(variable->name, *value);
+        } else if (expr->is_object_field()) {
+            Get* get = static_cast<Get*>(expr);
+            return new Set(get->callee, get->name, *value);
         }
 
         Lox::error(equals, "Invalid assignment target.");
@@ -346,7 +365,12 @@ Expr* Parser::call() {
              * ex - returns_fn()also_returns_fn(arg)returns_val();
              */
             expr = finish_call(expr);
-        } else {
+        } else if (match({DOT})) {
+            Token name = consume(IDENTIFIER,
+                                 "Expect property name after '.'.");
+            expr = new Get(*expr, name);
+        }
+        else {
             break;
         }
     }

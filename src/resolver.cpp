@@ -53,6 +53,11 @@ void Resolver::visit(const FuncStmt *stmt) {
     resolve_fn(stmt);
 }
 
+void Resolver::visit(const ClassStmt* stmt) {
+    declare(stmt->name);
+    define(stmt->name);
+}
+
 void Resolver::resolve_local(const Expr *expr, const Token name) {
     for (int i = scopes.size() - 1; i >= 0; i--) {
         if (scopes[i]->count(name.lexeme) > 0) {
@@ -155,6 +160,15 @@ void Resolver::visit(const Call *expr) {
     for (const Expr* arg : expr->args) {
         resolve(arg);
     }
+}
+
+void Resolver::visit(const Get *expr) {
+    resolve(&expr->callee);
+}
+
+void Resolver::visit(const Set *expr) {
+    resolve(&expr->value);
+    resolve(&expr->callee);
 }
 
 void Resolver::visit(const Grouping *expr) {

@@ -48,6 +48,7 @@ private:
 
     Stmt* declaration();
     Stmt* var_declaration();
+    Stmt* class_declaration();
     Stmt* statement();
     Stmt* print_statement();
     Stmt* block_statement();

@@ -1,8 +1,0 @@
-#ifndef LOXPP_INTERPRETERCONSTS_HPP
-#define LOXPP_INTERPRETERCONSTS_HPP
-
-namespace InterpreterConsts {
-    const double DOUBLE_COMPARISON_EPSILON = 0.000001;
-}
-
-#endif //LOXPP_INTERPRETERCONSTS_HPP

@@ -11,23 +11,35 @@ class Interpreter;
 class InterpreterResult {
 public:
     enum ResultType {
-        STR, NUMBER, NIL, BOOL, FUNCTION
+        STR, NUMBER, NIL, BOOL, FUNCTION, CLASS, INSTANCE
     };
 
     static std::string stringify(InterpreterResult&);
-    
+
     ResultType kind = NIL;
     std::string str_val;
     double num_val;
     bool bool_val;
 
+    // Function
     bool callable = false;
     int arity;
     const FuncStmt* function;
     Environment* closure = nullptr;
 
-    virtual InterpreterResult call(Interpreter* interpreter,
-                                   std::vector<InterpreterResult> args);
+    InterpreterResult call(Interpreter* interpreter, std::vector<InterpreterResult> args);
+
+    // Class
+    std::vector<Stmt*> methods;
+    std::map<std::string, InterpreterResult> fields;
+    std::string name;
+    InterpreterResult* class_def = nullptr;
+
+    InterpreterResult get(Token property);
+    void set(Token property, InterpreterResult value);
+
+    // Instance
+    InterpreterResult* klass = nullptr;
 
 };
 

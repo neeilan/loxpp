@@ -39,11 +39,14 @@ protected:
     InterpreterResult visit(const Assignment* expr);
     InterpreterResult visit(const Logical* expr);
     InterpreterResult visit(const Call* expr);
+    InterpreterResult visit(const Get* expr);
+    InterpreterResult visit(const Set* expr);
 
     void visit(const BlockStmt*);
     void visit(const ExprStmt*);
     void visit(const PrintStmt*);
     void visit(const VarStmt*);
+    void visit(const ClassStmt*);
     void visit(const IfStmt*);
     void visit(const WhileStmt*);
     void visit(const FuncStmt*);
