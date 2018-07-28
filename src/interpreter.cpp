@@ -56,13 +56,28 @@ void Interpreter::visit(const ClassStmt *stmt) {
     // Allows references to the class inside its own methods
     environment->define(stmt->name.lexeme, sentinel);
 
+    std::map<std::string, shared_ptr<InterpreterResult>> methods;
+
+    for (const Stmt* method : stmt->methods) {
+        auto _method = static_cast<const FuncStmt*>(method);
+
+        auto _method_impl = std::make_shared<InterpreterResult>();
+
+        _method_impl->kind = InterpreterResult::ResultType::FUNCTION;
+        _method_impl->callable = true;
+        _method_impl->function = _method;
+
+        methods[_method->name.lexeme] = _method_impl;
+    }
+
     auto klass = std::make_shared<InterpreterResult>();
+
     klass->kind = InterpreterResult::ResultType::CLASS;
     klass->name = stmt->name.lexeme;
+    klass->rt_methods = methods;
     klass->callable = true; // constructor
     klass->arity = 0;
     klass->class_def = klass.get(); // todo: dangerous?
-
 
     environment->assign(stmt->name, klass);
 }

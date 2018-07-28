@@ -79,6 +79,10 @@ shared_ptr<InterpreterResult> InterpreterResult::get(Token property)
         return fields[property.lexeme];
     }
 
+    // Possibly a method
+    shared_ptr<InterpreterResult> method = klass->find_method(this, property.lexeme);
+    if (method->kind != NIL) return method;
+
     throw RuntimeErr(property, "Undefined property '" + property.lexeme + "' in class " + klass->name + ".");
 }
 
@@ -86,4 +90,15 @@ void InterpreterResult::set(Token property,
                             shared_ptr<InterpreterResult> value)
 {
     fields[property.lexeme] = value;
+}
+
+shared_ptr<InterpreterResult> InterpreterResult::find_method(InterpreterResult * const instance,
+                                                             std::string name) {
+    if (rt_methods.count(name) > 0) {
+        return rt_methods[name];
+    }
+
+    auto nil = std::make_shared<InterpreterResult>();
+    nil->kind = NIL;
+    return nil;
 }

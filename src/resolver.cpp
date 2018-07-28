@@ -50,12 +50,19 @@ void Resolver::visit(const Assignment *expr) {
 void Resolver::visit(const FuncStmt *stmt) {
     declare(stmt->name);
     define(stmt->name);
-    resolve_fn(stmt);
+    resolve_fn(FunctionType::FUNCTION, stmt);
 }
 
 void Resolver::visit(const ClassStmt* stmt) {
     declare(stmt->name);
     define(stmt->name);
+
+    for (const Stmt* method : stmt->methods) {
+        FunctionType declaration = METHOD;
+        resolve_fn(declaration, static_cast<const FuncStmt*>(method));
+    }
+
+
 }
 
 void Resolver::resolve_local(const Expr *expr, const Token name) {
@@ -75,7 +82,7 @@ void Resolver::resolve_local(const Expr *expr, const Token name) {
 
 }
 
-void Resolver::resolve_fn(const FuncStmt *fn) {
+void Resolver::resolve_fn(FunctionType declaration, const FuncStmt *fn) {
     begin_scope();
 
     for (const Token& param : fn->parameters) {

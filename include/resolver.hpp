@@ -11,6 +11,10 @@
 #include "visitor.h"
 #include "visitable_types.hpp"
 
+enum FunctionType {
+    METHOD, FUNCTION, NONE
+};
+
 // true in map == 'is finished being initialized in this scope'
 //using scope_map = std::map<std::string, bool>
 
@@ -51,7 +55,7 @@ private:
     void resolve(const Stmt* stmt);
     void resolve(const Expr* expr);
     void resolve_local(const Expr* expr, const Token name);
-    void resolve_fn(const FuncStmt* fn);
+    void resolve_fn(FunctionType declaration, const FuncStmt* fn);
     void declare(const Token);
     void define(const Token);
 };

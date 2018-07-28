@@ -37,12 +37,15 @@ public:
             std::vector<shared_ptr<InterpreterResult> > args);
 
     // Class
-    std::vector<Stmt*> methods;
-    std::map<std::string, shared_ptr<InterpreterResult>> fields;
     std::string name;
     InterpreterResult* class_def = nullptr;
+    std::vector<Stmt*> methods;
+    // Class (runtime)
+    std::map<std::string, shared_ptr<InterpreterResult>> rt_methods;
+    std::map<std::string, shared_ptr<InterpreterResult>> fields;
 
     shared_ptr<InterpreterResult> get(Token property);
+    shared_ptr<InterpreterResult> find_method(InterpreterResult* const instance, std::string name);
     void set(Token property, shared_ptr<InterpreterResult> value);
 
     // Instance

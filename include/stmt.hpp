@@ -133,14 +133,14 @@ class ClassStmt : public Stmt {
 public:
     explicit ClassStmt(Token name, std::vector<Stmt*> methods)
             : name(name),
-              functions(functions) {}
+              methods(methods) {}
 
     virtual void accept(StmtVisitor *visitor) const {
         visitor->visit(this);
     }
 
     const Token name;
-    const std::vector<Stmt*> functions;
+    const std::vector<Stmt*> methods;
 };
 
 

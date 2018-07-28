@@ -12,12 +12,10 @@ template <class T>
 class Environment {
 public:
     explicit Environment()
-            : enclosing(nullptr){};
+            : enclosing(nullptr) {};
 
     explicit Environment(Environment* enclosing)
-            : enclosing(enclosing)
-    {
-    }
+            : enclosing(enclosing) {}
 
     Environment(const Environment& env)
     {
@@ -74,11 +72,11 @@ private:
 
     Environment* ancestor(int distance)
     {
-
         Environment<T>* curr_environment = this;
 
-        for (int i = 0; i < distance; i++)
+        for (int i = 0; i < distance; i++) {
             curr_environment = curr_environment->enclosing;
+        }
 
         return curr_environment;
     }
