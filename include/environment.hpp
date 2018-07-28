@@ -5,11 +5,10 @@
 #include <memory>
 #include <string>
 
-#include "interpreter_result.hpp"
 #include "token.hpp"
+#include "runtime_err.hpp"
 
-class InterpreterResult;
-
+template <class T>
 class Environment {
 public:
     explicit Environment()
@@ -23,17 +22,57 @@ public:
         this->values = env.values;
     }
 
-    void define(std::string name, InterpreterResult &value);
-    void assign(const Token name, InterpreterResult &value);
-    InterpreterResult get(const Token name);
-    InterpreterResult get_at(int distance, const Token name);
-    void assign_at(int distance, const Token name, InterpreterResult value);
+    void define(std::string name, const T value) {
+        values[name] = value;
+    }
+
+    void assign(const Token name, const T value) {
+        if (values.count(name.lexeme) > 0) {
+            values[name.lexeme] = value;
+            return;
+        }
+
+        if (enclosing) {
+            enclosing->assign(name, value);
+            return;
+        }
+
+        throw RuntimeErr(name, "Undefined assignment target '" + name.lexeme + "'.");
+    }
+
+    T get(const Token name) {
+        if (values.count(name.lexeme) > 0) {
+            return values[name.lexeme];
+        }
+
+        if (enclosing) {
+            return enclosing->get(name);
+        }
+
+        throw RuntimeErr(name, "Undefined variable '" + name.lexeme + "'.");
+    }
+
+    T get_at(int distance, const Token name) {
+        return (ancestor(distance)->values)[name.lexeme];
+    }
+
+    void assign_at(int distance, const Token name, const T value) {
+        ancestor(distance)->values.at(name.lexeme) = value;
+    }
 
 private:
-    Environment* enclosing = nullptr;
-    std::map<std::string, InterpreterResult> values;
+    Environment<T>* enclosing = nullptr;
+    std::map<std::string, T> values;
 
-    Environment* ancestor(int distance);
+    Environment* ancestor(int distance) {
+
+        Environment<T>* curr_environment = this;
+
+        for (int i = 0; i < distance; i++)
+            curr_environment = curr_environment->enclosing;
+
+        return curr_environment;
+    }
 };
 
 #endif //LOXPP_ENVIRONMENT_HPP

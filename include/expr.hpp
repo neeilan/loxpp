@@ -6,14 +6,17 @@
 #include "token.hpp"
 #include "visitor.h"
 
+#include <memory>
 #include <string>
 #include <vector>
+
+using std::shared_ptr;
 
 class Expr {
 public:
     virtual void accept(ExprVisitor<void>* visitor) const = 0;
     virtual std::string accept(ExprVisitor<std::string>* visitor) const = 0;
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const = 0;
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const = 0;
     virtual bool lvalue() const { return false; }
     virtual bool is_object_field() const { return false; }
     virtual bool callable() const { return false; }
@@ -34,7 +37,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -56,7 +59,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -78,7 +81,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -101,7 +104,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -121,7 +124,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -142,7 +145,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -163,7 +166,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -185,7 +188,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -209,7 +212,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -233,7 +236,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -256,7 +259,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 
@@ -281,7 +284,7 @@ public:
         return visitor->visit(this);
     }
 
-    virtual InterpreterResult accept(ExprVisitor<InterpreterResult>* visitor) const {
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
         return visitor->visit(this);
     }
 

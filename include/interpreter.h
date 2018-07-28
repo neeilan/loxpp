@@ -2,6 +2,7 @@
 #define LOXPP_INTERPRETER_H
 
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -13,15 +14,9 @@
 #include "stmt.hpp"
 #include "environment.hpp"
 
+using std::shared_ptr;
 
-class RuntimeErr : public std::runtime_error {
-public:
-    RuntimeErr(Token token, const std::string msg) : std::runtime_error(msg), token(token) {}
-
-    Token token;
-};
-
-class Interpreter : public ExprVisitor<InterpreterResult>, public StmtVisitor {
+class Interpreter : public ExprVisitor<shared_ptr<InterpreterResult> >, public StmtVisitor {
 public:
     void interpret(const std::vector<Stmt*>& statements);
     void resolve(const Expr* expr, int depth);
@@ -29,18 +24,18 @@ public:
 
 
 protected:
-    InterpreterResult visit(const Binary* expr);
-    InterpreterResult visit(const StrLiteral* expr);
-    InterpreterResult visit(const NumLiteral* expr);
-    InterpreterResult visit(const BoolLiteral* expr);
-    InterpreterResult visit(const Grouping* expr);
-    InterpreterResult visit(const Unary* expr);
-    InterpreterResult visit(const Variable* expr);
-    InterpreterResult visit(const Assignment* expr);
-    InterpreterResult visit(const Logical* expr);
-    InterpreterResult visit(const Call* expr);
-    InterpreterResult visit(const Get* expr);
-    InterpreterResult visit(const Set* expr);
+    shared_ptr<InterpreterResult> visit(const Binary* expr);
+    shared_ptr<InterpreterResult> visit(const StrLiteral* expr);
+    shared_ptr<InterpreterResult> visit(const NumLiteral* expr);
+    shared_ptr<InterpreterResult> visit(const BoolLiteral* expr);
+    shared_ptr<InterpreterResult> visit(const Grouping* expr);
+    shared_ptr<InterpreterResult> visit(const Unary* expr);
+    shared_ptr<InterpreterResult> visit(const Variable* expr);
+    shared_ptr<InterpreterResult> visit(const Assignment* expr);
+    shared_ptr<InterpreterResult> visit(const Logical* expr);
+    shared_ptr<InterpreterResult> visit(const Call* expr);
+    shared_ptr<InterpreterResult> visit(const Get* expr);
+    shared_ptr<InterpreterResult> visit(const Set* expr);
 
     void visit(const BlockStmt*);
     void visit(const ExprStmt*);
@@ -56,17 +51,22 @@ protected:
 private:
     friend class InterpreterResult;
 
-    Environment globals;
-    Environment* environment = &globals;
-    std::map<const Expr*, int> locals;
-    InterpreterResult lookup_variable(const Token name, const Expr* expr);
+    Environment<shared_ptr<InterpreterResult> > globals;
+    Environment<shared_ptr<InterpreterResult> > * environment = &globals;
 
-    InterpreterResult return_val;
+    std::map<const Expr*, int> locals;
+
+    shared_ptr<InterpreterResult> return_val;
+
     void execute(const Stmt* stmt);
-    void execute(const std::vector<Stmt*> stmts, Environment* environment1);
-    InterpreterResult evaluate(const Expr& expr);
+    void execute(const std::vector<Stmt*> stmts, Environment<shared_ptr<InterpreterResult> >* environment1);
+
+    shared_ptr<InterpreterResult> evaluate(const Expr& expr);
+    shared_ptr<InterpreterResult> lookup_variable(const Token name, const Expr* expr);
+
     bool is_truthy(const InterpreterResult& expr);
     bool is_equal(const InterpreterResult& left, const InterpreterResult& right);
+
     void check_numeric_operand(const Token op, const InterpreterResult& right);
     void check_numeric_operands(const Token op, const InterpreterResult& left, const InterpreterResult& right);
 };

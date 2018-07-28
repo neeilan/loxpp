@@ -1,10 +1,14 @@
 #include <iostream>
-#include <return.hpp>
+#include <memory>
 
+#include "return.hpp"
 #include "interpreter.h"
 #include "interpreter_result.hpp"
+#include "runtime_err.hpp"
 #include "expr.hpp"
 #include "lox.hpp"
+
+using std::shared_ptr;
 
 void Interpreter::resolve(const Expr *expr, int depth) {
     locals[expr] = depth;
@@ -15,7 +19,7 @@ void Interpreter::interpret(const std::vector<Stmt*>& statements) {
         for (const Stmt* stmt : statements) {
             execute(stmt);
         }
-    } catch (RuntimeErr err) {
+    } catch (RuntimeErr &err) {
         Lox::runtime_error(err);
     }
 }
@@ -24,15 +28,15 @@ void Interpreter::execute(const Stmt* stmt) {
     stmt->accept(this);
 }
 
-void Interpreter::execute(const std::vector<Stmt*> stmts, Environment* exec_env) {
-    Environment* prev = environment;
+void Interpreter::execute(const std::vector<Stmt*> stmts, Environment<shared_ptr<InterpreterResult> >* exec_env) {
+    Environment<shared_ptr<InterpreterResult> >* prev = environment;
 
     environment = exec_env;
 
     try {
         for (const Stmt* stmt : stmts)
             stmt->accept(this);
-    } catch (Return) {
+    } catch (Return &_r) {
         environment = prev;
         return;
     }
@@ -41,26 +45,26 @@ void Interpreter::execute(const std::vector<Stmt*> stmts, Environment* exec_env)
 }
 
 void Interpreter::visit(const VarStmt *stmt) {
-    InterpreterResult value = evaluate(*stmt->expression);
+    shared_ptr<InterpreterResult> value = evaluate(*stmt->expression);
     environment->define(stmt->name.lexeme, value);
 }
 
 void Interpreter::visit(const ClassStmt *stmt) {
-    InterpreterResult sentinel;
-    sentinel.kind = InterpreterResult::ResultType::NIL;
+    shared_ptr<InterpreterResult> sentinel = std::make_shared<InterpreterResult>();
+    sentinel->kind = InterpreterResult::ResultType::NIL;
 
     // Allows references to the class inside its own methods
     environment->define(stmt->name.lexeme, sentinel);
 
-    InterpreterResult* klass = new InterpreterResult();
+    auto klass = std::make_shared<InterpreterResult>();
     klass->kind = InterpreterResult::ResultType::CLASS;
     klass->name = stmt->name.lexeme;
     klass->callable = true; // constructor
     klass->arity = 0;
-    klass->class_def = klass;
+    klass->class_def = klass.get(); // todo: dangerous?
 
 
-    environment->assign(stmt->name, *klass);
+    environment->assign(stmt->name, klass);
 }
 
 void Interpreter::visit(const ExprStmt *stmt) {
@@ -68,26 +72,26 @@ void Interpreter::visit(const ExprStmt *stmt) {
 }
 
 void Interpreter::visit(const BlockStmt *stmt) {
-    Environment* previous = environment;
+    Environment<shared_ptr<InterpreterResult> >* previous = environment;
 
-    environment = new Environment(previous);
+    environment = new Environment<shared_ptr<InterpreterResult> >(previous);
 
     try {
         for (const Stmt* inner_statement : stmt->block_contents) {
             execute(inner_statement);
         }
     }
-    catch (RuntimeErr err) {
+    catch (RuntimeErr &err) {
         Lox::runtime_error(err);
     };
 
-    //delete environment;
+    delete environment;
     environment = previous;
 }
 
 void Interpreter::visit(const PrintStmt *stmt) {
-    InterpreterResult value = evaluate(*(stmt->expression));
-    std::cout << InterpreterResult::stringify(value) << std::endl;
+    shared_ptr<InterpreterResult> value = evaluate(*(stmt->expression));
+    std::cout << InterpreterResult::stringify(*value) << std::endl;
 }
 
 void Interpreter::visit(const ReturnStmt* stmt) {
@@ -95,35 +99,35 @@ void Interpreter::visit(const ReturnStmt* stmt) {
     if (stmt->value) {
         return_val = evaluate(*stmt->value);
     } else {
-        InterpreterResult nil_val;
-        nil_val.kind = InterpreterResult::NIL;
+        shared_ptr<InterpreterResult> nil_val = std::make_shared<InterpreterResult>();
+        nil_val->kind = InterpreterResult::NIL;
         return_val = nil_val;
     }
     throw Return();
 }
 
 void Interpreter::visit(const WhileStmt *stmt) {
-    while(is_truthy(evaluate(*stmt->condition))) {
+    while(is_truthy(*evaluate(*stmt->condition))) {
         execute(stmt->body);
     }
 }
 
 void Interpreter::visit(const FuncStmt *stmt) {
-    InterpreterResult result;
-    result.function = stmt;
-    result.kind = InterpreterResult::ResultType::FUNCTION;
-    result.arity = stmt->parameters.size();
-    result.closure = environment;
-    result.callable = true;
+    shared_ptr<InterpreterResult> result = std::make_shared<InterpreterResult>();
+    result->function = stmt;
+    result->kind = InterpreterResult::ResultType::FUNCTION;
+    result->arity = stmt->parameters.size();
+    result->closure = environment;
+    result->callable = true;
     environment->define(stmt->name.lexeme, result);
 }
 
-InterpreterResult Interpreter::evaluate(const Expr &expr) {
+shared_ptr<InterpreterResult> Interpreter::evaluate(const Expr &expr) {
     return expr.accept(this);
 }
 
 void Interpreter::visit(const IfStmt *stmt) {
-    if (is_truthy(evaluate(*stmt->condition))) {
+    if (is_truthy(*evaluate(*stmt->condition))) {
         execute(stmt->then_branch);
     } else if (stmt->else_branch) {
         execute((stmt->else_branch));
@@ -131,76 +135,76 @@ void Interpreter::visit(const IfStmt *stmt) {
 }
 
 
-InterpreterResult Interpreter::visit(const Binary* expr) {
+shared_ptr<InterpreterResult> Interpreter::visit(const Binary* expr) {
 
-    InterpreterResult left = evaluate(expr->left);
-    InterpreterResult right = evaluate(expr->right);
+    shared_ptr<InterpreterResult> left = evaluate(expr->left);
+    shared_ptr<InterpreterResult> right = evaluate(expr->right);
 
-    InterpreterResult result;
+    shared_ptr<InterpreterResult> result = std::make_shared<InterpreterResult>();
 
     switch (expr->op.type) {
         case BANG_EQUAL : {
-            result.bool_val = !is_equal(left, right);
-            result.kind = InterpreterResult::ResultType::BOOL;
+            result->bool_val = !is_equal(*left, *right);
+            result->kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case EQUAL_EQUAL : {
-            result.bool_val = is_equal(left, right);
-            result.kind = InterpreterResult::ResultType::BOOL;
+            result->bool_val = is_equal(*left, *right);
+            result->kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case GREATER : {
-            check_numeric_operands(expr->op, left, right);
-            result.bool_val = left.num_val > right.num_val;
-            result.kind = InterpreterResult::ResultType::BOOL;
+            check_numeric_operands(expr->op, *left, *right);
+            result->bool_val = left->num_val > right->num_val;
+            result->kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case GREATER_EQUAL : {
-            check_numeric_operands(expr->op, left, right);
-            result.bool_val = left.num_val >= right.num_val;
-            result.kind = InterpreterResult::ResultType::BOOL;
+            check_numeric_operands(expr->op, *left, *right);
+            result->bool_val = left->num_val >= right->num_val;
+            result->kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case LESS : {
-            check_numeric_operands(expr->op, left, right);
-            result.bool_val = left.num_val < right.num_val;
-            result.kind = InterpreterResult::ResultType::BOOL;
+            check_numeric_operands(expr->op, *left, *right);
+            result->bool_val = left->num_val < right->num_val;
+            result->kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case LESS_EQUAL : {
-            check_numeric_operands(expr->op, left, right);
-            result.bool_val = left.num_val <= right.num_val;
-            result.kind = InterpreterResult::ResultType::BOOL;
+            check_numeric_operands(expr->op, *left, *right);
+            result->bool_val = left->num_val <= right->num_val;
+            result->kind = InterpreterResult::ResultType::BOOL;
             break;
         }
         case MINUS: {
-            check_numeric_operands(expr->op, left, right);
-            result.num_val = left.num_val - right.num_val;
-            result.kind = InterpreterResult::ResultType::NUMBER;
+            check_numeric_operands(expr->op, *left, *right);
+            result->num_val = left->num_val - right->num_val;
+            result->kind = InterpreterResult::ResultType::NUMBER;
             break;
         }
         case SLASH: {
-            check_numeric_operands(expr->op, left, right);
-            result.num_val = left.num_val / right.num_val;
-            result.kind = InterpreterResult::ResultType::NUMBER;
+            check_numeric_operands(expr->op, *left, *right);
+            result->num_val = left->num_val / right->num_val;
+            result->kind = InterpreterResult::ResultType::NUMBER;
             break;
         }
         case STAR: {
-            check_numeric_operands(expr->op, left, right);
-            result.num_val = left.num_val * right.num_val;
-            result.kind = InterpreterResult::ResultType::NUMBER;
+            check_numeric_operands(expr->op, *left, *right);
+            result->num_val = left->num_val * right->num_val;
+            result->kind = InterpreterResult::ResultType::NUMBER;
             break;
         }
         case PLUS : {
-            if (left.kind == InterpreterResult::ResultType::NUMBER && right.kind == InterpreterResult::ResultType::NUMBER) {
-                result.num_val = left.num_val + right.num_val;
-                result.kind = InterpreterResult::ResultType::NUMBER;
+            if (left->kind == InterpreterResult::ResultType::NUMBER && right->kind == InterpreterResult::ResultType::NUMBER) {
+                result->num_val = left->num_val + right->num_val;
+                result->kind = InterpreterResult::ResultType::NUMBER;
                 return result;
             }
 
-            if (left.kind == InterpreterResult::ResultType::STR && right.kind == InterpreterResult::ResultType::STR) {
-                result.str_val = left.str_val + right.str_val;
-                result.kind = InterpreterResult::ResultType ::STR;
+            if (left->kind == InterpreterResult::ResultType::STR && right->kind == InterpreterResult::ResultType::STR) {
+                result->str_val = left->str_val + right->str_val;
+                result->kind = InterpreterResult::ResultType ::STR;
                 return result;
             }
 
@@ -214,46 +218,46 @@ InterpreterResult Interpreter::visit(const Binary* expr) {
 
 }
 
-InterpreterResult Interpreter::visit(const StrLiteral* expr) {
-    InterpreterResult result;
-    result.str_val = expr->value;
-    result.kind = expr->nil ? InterpreterResult::ResultType::NIL : InterpreterResult::ResultType::STR;
+shared_ptr<InterpreterResult> Interpreter::visit(const StrLiteral* expr) {
+    shared_ptr<InterpreterResult> result = std::make_shared<InterpreterResult>();
+    result->str_val = expr->value;
+    result->kind = expr->nil ? InterpreterResult::ResultType::NIL : InterpreterResult::ResultType::STR;
     return result;
 }
 
-InterpreterResult Interpreter::visit(const NumLiteral *expr) {
-    InterpreterResult result;
-    result.num_val = expr->value;
-    result.kind = InterpreterResult::ResultType::NUMBER;
+shared_ptr<InterpreterResult> Interpreter::visit(const NumLiteral *expr) {
+    shared_ptr<InterpreterResult> result = std::make_shared<InterpreterResult>();
+    result->num_val = expr->value;
+    result->kind = InterpreterResult::ResultType::NUMBER;
     return result;
 }
 
-InterpreterResult Interpreter::visit(const BoolLiteral* expr) {
-    InterpreterResult result;
-    result.bool_val = expr->value;
-    result.kind = InterpreterResult::ResultType::BOOL;
+shared_ptr<InterpreterResult> Interpreter::visit(const BoolLiteral* expr) {
+    shared_ptr<InterpreterResult> result = std::make_shared<InterpreterResult>();
+    result->bool_val = expr->value;
+    result->kind = InterpreterResult::ResultType::BOOL;
     return result;
 }
 
-InterpreterResult Interpreter::visit(const Grouping* expr) {
+shared_ptr<InterpreterResult> Interpreter::visit(const Grouping* expr) {
     return evaluate(expr->expression);
 }
 
-InterpreterResult Interpreter::visit(const Unary* expr) {
-    InterpreterResult right = evaluate(expr->right);
-    InterpreterResult result;
+shared_ptr<InterpreterResult> Interpreter::visit(const Unary* expr) {
+    shared_ptr<InterpreterResult> right = evaluate(expr->right);
+    shared_ptr<InterpreterResult> result = std::make_shared<InterpreterResult>();
 
     switch(expr->op.type) {
         case BANG: {
-            result.bool_val = !is_truthy(right);
-            result.kind = InterpreterResult::ResultType::BOOL;
+            result->bool_val = !is_truthy(*right);
+            result->kind = InterpreterResult::ResultType::BOOL;
             return result;
         }
         case MINUS: {
-            check_numeric_operand(expr->op, right);
-            double val =  -(right.num_val);
-            result.num_val = val;
-            result.kind = InterpreterResult::ResultType::NUMBER;
+            check_numeric_operand(expr->op, *right);
+            double val =  -(right->num_val);
+            result->num_val = val;
+            result->kind = InterpreterResult::ResultType::NUMBER;
             return result;
         }
         default:
@@ -261,12 +265,12 @@ InterpreterResult Interpreter::visit(const Unary* expr) {
     }
 }
 
-InterpreterResult Interpreter::visit(const Variable *expr) {
+shared_ptr<InterpreterResult> Interpreter::visit(const Variable *expr) {
     return lookup_variable(expr->name, expr);
 }
 
-InterpreterResult Interpreter::visit(const Assignment *expr) {
-    InterpreterResult value = evaluate(expr->value);
+shared_ptr<InterpreterResult> Interpreter::visit(const Assignment *expr) {
+    shared_ptr<InterpreterResult> value = evaluate(expr->value);
 
     if (locals.count(expr) == 0) {
         globals.assign(expr->name, value);
@@ -279,60 +283,60 @@ InterpreterResult Interpreter::visit(const Assignment *expr) {
     return value; // Allows for statements like: print a = 2; -> "2"
 }
 
-InterpreterResult Interpreter::visit(const Logical *expr) {
-    InterpreterResult left = evaluate(expr->left);
+shared_ptr<InterpreterResult> Interpreter::visit(const Logical *expr) {
+    shared_ptr<InterpreterResult> left = evaluate(expr->left);
 
     if (expr->op.type == OR) {
-        if (is_truthy(left)) return  left;
+        if (is_truthy(*left)) return  left;
     } else {
-        if (!is_truthy(left)) return left; // ex - if (false and true)
+        if (!is_truthy(*left)) return left; // ex - if (false and true)
     }
 
     return evaluate(expr->right);
 }
 
-InterpreterResult Interpreter::visit(const Call *expr) {
-    InterpreterResult callee = evaluate(expr->callee);
+shared_ptr<InterpreterResult> Interpreter::visit(const Call *expr) {
+    shared_ptr<InterpreterResult> callee = evaluate(expr->callee);
 
-    if (!callee.callable) {
+    if (!callee->callable) {
         throw RuntimeErr(expr->paren, "Can only call functions and classes.");
     }
 
-    std::vector<InterpreterResult> args;
+    std::vector< shared_ptr<InterpreterResult> > args;
 
     for (Expr* arg : expr->args) {
         args.push_back(evaluate(*arg));
     }
 
-    if (args.size() != callee.arity) {
+    if (args.size() != callee->arity) {
         throw RuntimeErr(expr->paren,
-                         "Expected " + std::to_string(callee.arity)
+                         "Expected " + std::to_string(callee->arity)
                          + " arguments but got " + std::to_string(args.size()) + ".");
     }
 
-    return callee.call(this, args);
+    return callee->call(this, args);
 }
 
-InterpreterResult Interpreter::visit(const Get *expr) {
-    InterpreterResult callee = evaluate(expr->callee);
+shared_ptr<InterpreterResult> Interpreter::visit(const Get *expr) {
+    shared_ptr<InterpreterResult> callee = evaluate(expr->callee);
 
-    if (callee.kind == InterpreterResult::ResultType::INSTANCE) {
-        return callee.get(expr->name);
+    if (callee->kind == InterpreterResult::ResultType::INSTANCE) {
+        return callee->get(expr->name);
     }
 
-    throw new RuntimeErr(expr->name, "Only instances have properties.");
+    throw RuntimeErr(expr->name, "Only instances have properties.");
 }
 
-InterpreterResult Interpreter::visit(const Set *expr) {
-    InterpreterResult object = evaluate(expr->callee);
+shared_ptr<InterpreterResult> Interpreter::visit(const Set *expr) {
+    shared_ptr<InterpreterResult> object = evaluate(expr->callee);
 
-    if (!object.kind == InterpreterResult::ResultType::INSTANCE) {
-        throw new RuntimeErr(expr->name, "Only instances have fields.");
+    if (!(object->kind == InterpreterResult::ResultType::INSTANCE)) {
+        throw RuntimeErr(expr->name, "Only instances have fields.");
     }
 
-    InterpreterResult value = evaluate(expr->value);
+    shared_ptr<InterpreterResult> value = evaluate(expr->value);
 
-    object.set(expr->name, value);
+    object->set(expr->name, value);
     return value;
 }
 
@@ -383,7 +387,7 @@ void Interpreter::check_numeric_operands(const Token op, const InterpreterResult
         throw RuntimeErr(op, "Operands must be a number");
 }
 
-InterpreterResult Interpreter::lookup_variable(const Token name, const Expr *expr) {
+shared_ptr<InterpreterResult> Interpreter::lookup_variable(const Token name, const Expr *expr) {
     if (locals.count(expr) == 0) {
         return globals.get(name);
     }

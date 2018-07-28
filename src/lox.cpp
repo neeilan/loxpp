@@ -5,6 +5,7 @@
 #include "stmt.hpp"
 #include "scanner.hpp"
 #include "token.hpp"
+#include "runtime_err.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -13,8 +14,6 @@
 #include <string>
 #include <vector>
 #include <resolver.hpp>
-
-#include "ast_printer.hpp"
 
 
 bool Lox::had_error = false;

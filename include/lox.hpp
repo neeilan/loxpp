@@ -5,6 +5,7 @@
 
 #include "token.hpp"
 #include "interpreter.h"
+#include "runtime_err.hpp"
 
 class Lox {
 public:

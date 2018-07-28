@@ -1,10 +1,16 @@
 #ifndef LOXPP_INTERPRETER_RESULT_HPP
 #define LOXPP_INTERPRETER_RESULT_HPP
 
+#include <memory>
 #include <string>
+
 #include "visitable_types.hpp"
 #include "interpreter.h"
 #include "environment.hpp"
+
+
+
+using std::shared_ptr;
 
 class Interpreter;
 
@@ -25,18 +31,20 @@ public:
     bool callable = false;
     int arity;
     const FuncStmt* function;
-    Environment* closure = nullptr;
+    Environment<shared_ptr<InterpreterResult> >* closure = nullptr;
 
-    InterpreterResult call(Interpreter* interpreter, std::vector<InterpreterResult> args);
+    shared_ptr<InterpreterResult> call(
+            Interpreter* interpreter,
+            std::vector<shared_ptr<InterpreterResult> > args);
 
     // Class
     std::vector<Stmt*> methods;
-    std::map<std::string, InterpreterResult> fields;
+    std::map<std::string, shared_ptr<InterpreterResult>> fields;
     std::string name;
     InterpreterResult* class_def = nullptr;
 
-    InterpreterResult get(Token property);
-    void set(Token property, InterpreterResult value);
+    shared_ptr<InterpreterResult> get(Token property);
+    void set(Token property, shared_ptr<InterpreterResult> value);
 
     // Instance
     InterpreterResult* klass = nullptr;

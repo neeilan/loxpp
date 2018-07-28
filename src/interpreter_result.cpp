@@ -1,3 +1,4 @@
+#include <memory>
 #include <sstream>
 #include <string>
 #include <iomanip>
@@ -5,8 +6,11 @@
 
 #include "interpreter.h"
 #include "interpreter_result.hpp"
+#include "runtime_err.hpp"
 #include "expr.hpp"
 #include "lox.hpp"
+
+using std::shared_ptr;
 
 
 int DOUBLE_PRECISION = 4;
@@ -61,34 +65,27 @@ std::string InterpreterResult::stringify(InterpreterResult &result) {
     return "Unable to stringify InterpretedResult";
 }
 
-InterpreterResult InterpreterResult::call(Interpreter *interpreter, std::vector<InterpreterResult> args) {
+shared_ptr<InterpreterResult> InterpreterResult::call(Interpreter *interpreter, std::vector<shared_ptr<InterpreterResult> > args) {
 
     if (kind == ResultType::CLASS) {
-        InterpreterResult instance;
-        instance.kind = ResultType::INSTANCE;
-        instance.klass = class_def;
+        auto instance = std::make_shared<InterpreterResult>();
+        instance->kind = ResultType::INSTANCE;
+        instance->klass = class_def;
         return instance;
     }
 
-    Environment* call_env = new Environment(closure);
+    Environment< shared_ptr<InterpreterResult> >* call_env = new Environment<shared_ptr<InterpreterResult> >(closure);
 
     for (int i = 0; i < function->parameters.size(); i++) {
         call_env->define(function->parameters[i].lexeme, args[i]);
     }
 
-
-//    BlockStmt* body = new BlockStmt(function->body);
-
-
     interpreter->execute(function->body, call_env);
-
-//    delete body;
-    //delete call_env;
 
     return interpreter->return_val;
 }
 
-InterpreterResult InterpreterResult::get(Token property) {
+shared_ptr<InterpreterResult> InterpreterResult::get(Token property) {
     if (fields.count(property.lexeme) > 0) {
         return fields[property.lexeme];
     }
@@ -96,6 +93,6 @@ InterpreterResult InterpreterResult::get(Token property) {
     throw RuntimeErr(property, "Undefined property '" + property.lexeme + "' in class " + klass->name + ".");
 }
 
-void InterpreterResult::set(Token property, InterpreterResult value) {
+void InterpreterResult::set(Token property, shared_ptr<InterpreterResult> value) {
     fields[property.lexeme] = value;
 }
