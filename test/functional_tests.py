@@ -92,6 +92,14 @@ class LoxppOutputErrorsTest(unittest.TestCase):
       for snippet in error_snippets:
         self.assertTrue(snippet in output)
 
+
+    def test_redeclared_vars(self):
+      error_snippets = ['line 6', 'line 13', "'a'", "'c'", 'already declared in this scope']
+      output = run_file(absolute_path('err_scope_redeclarations.lox'))
+      
+      for snippet in error_snippets:
+        self.assertTrue(snippet in output)
  
+
 if __name__ == '__main__':
   unittest.main()

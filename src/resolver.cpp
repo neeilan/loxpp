@@ -153,6 +153,10 @@ void Resolver::define(const Token name) {
 void Resolver::declare(const Token name) {
     if (scopes.empty()) return;
 
+    if (scopes.back()->count(name.lexeme) > 0) {
+        Lox::error(name, "Variable with this name already declared in this scope.");
+    }
+
     // mark as declared but uninitialized for use
     std::map<std::string, bool>* scope = scopes.back();
     scope->insert(std::pair<std::string, bool>(name.lexeme, false));
