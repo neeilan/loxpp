@@ -22,12 +22,16 @@ clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
 
+test:
+	@echo " Running functional tests...";
+	python test/functional_tests.py
+
 # Tools
-generate_ast:
+generate_ast: $(TARGET)
 	$(CC) $(CFLAGS) tools/generate_ast.cpp $(INC) -o bin/generate_ast
 
 # Tests
 tester:
 	$(CC) $(CFLAGS) test/tester.cpp $(INC) -o bin/tester
 
-.PHONY: clean
+.PHONY: clean test
