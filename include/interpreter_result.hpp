@@ -40,6 +40,7 @@ public:
     std::string name;
     InterpreterResult* class_def = nullptr;
     std::vector<Stmt*> methods;
+
     // Class (runtime)
     std::map<std::string, shared_ptr<InterpreterResult>> rt_methods;
     std::map<std::string, shared_ptr<InterpreterResult>> fields;
@@ -51,6 +52,8 @@ public:
     // Instance
     InterpreterResult* klass = nullptr;
 
+    // Instance method
+    shared_ptr<InterpreterResult> bind(InterpreterResult* const instance);
 };
 
 

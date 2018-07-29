@@ -153,6 +153,26 @@ public:
     const Expr& right;
 };
 
+class This : public Expr {
+public:
+    This(Token keyword)
+            : keyword(keyword) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
+        return visitor->visit(this);
+    }
+
+    const Token keyword;
+};
+
 class Variable : public Expr {
 public:
     Variable(Token name)

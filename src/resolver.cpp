@@ -47,6 +47,10 @@ void Resolver::visit(const Assignment *expr) {
     resolve_local(expr, expr->name); // resolve the var being assigned to
 }
 
+void Resolver::visit(const This *expr) {
+    resolve_local(expr, expr->keyword);
+}
+
 void Resolver::visit(const FuncStmt *stmt) {
     declare(stmt->name);
     define(stmt->name);
@@ -57,12 +61,20 @@ void Resolver::visit(const ClassStmt* stmt) {
     declare(stmt->name);
     define(stmt->name);
 
+    begin_scope();
+
+    /*
+     * Whenever 'this' is encountered in a method, it will resolve to a
+     * "local variable” in an implicit scope just outside the method body.
+     */
+    scopes.back()->insert(std::pair<std::string, bool>("this", true));
+
     for (const Stmt* method : stmt->methods) {
         FunctionType declaration = METHOD;
         resolve_fn(declaration, static_cast<const FuncStmt*>(method));
     }
 
-
+    end_scope();
 }
 
 void Resolver::resolve_local(const Expr *expr, const Token name) {

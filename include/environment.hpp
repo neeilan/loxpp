@@ -14,10 +14,10 @@ public:
     explicit Environment()
             : enclosing(nullptr) {};
 
-    explicit Environment(Environment* enclosing)
+    explicit Environment(Environment<T>* enclosing)
             : enclosing(enclosing) {}
 
-    Environment(const Environment& env)
+    explicit Environment(const Environment& env)
     {
         this->enclosing = env.enclosing;
         this->values = env.values;

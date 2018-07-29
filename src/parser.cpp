@@ -396,7 +396,7 @@ Expr* Parser::finish_call(Expr* callee) {
 }
 
 Expr* Parser::primary() {
-    // todo: this can be a switch
+    if (match({THIS}))          return new This(previous());
     if (match({FALSE}))         return new BoolLiteral(false);
     if (match({TRUE}))          return new BoolLiteral(true);
     if (match({NIL}))           return new StrLiteral("nil", true);

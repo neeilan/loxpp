@@ -37,6 +37,7 @@ public:
     virtual T visit(const Call*) = 0;
     virtual T visit(const Get*) = 0;
     virtual T visit(const Set*) = 0;
+    virtual T visit(const This*) = 0;
 };
 
 #endif //LOXPP_VISITOR_H

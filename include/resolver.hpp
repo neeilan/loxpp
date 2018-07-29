@@ -39,6 +39,7 @@ private:
     void visit(const Call* expr);
     void visit(const Get* expr);
     void visit(const Set* expr);
+    void visit(const This* expr);
 
     void visit(const BlockStmt*);
     void visit(const ExprStmt*);

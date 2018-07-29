@@ -14,6 +14,7 @@ class Logical;
 class Call;
 class Get;
 class Set;
+class This;
 
 class Stmt;
 class ExprStmt;

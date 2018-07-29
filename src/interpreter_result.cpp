@@ -95,10 +95,28 @@ void InterpreterResult::set(Token property,
 shared_ptr<InterpreterResult> InterpreterResult::find_method(InterpreterResult * const instance,
                                                              std::string name) {
     if (rt_methods.count(name) > 0) {
-        return rt_methods[name];
+        return rt_methods[name]->bind(instance);
     }
 
     auto nil = std::make_shared<InterpreterResult>();
     nil->kind = NIL;
     return nil;
+}
+
+shared_ptr<InterpreterResult> InterpreterResult::bind(InterpreterResult *const instance) {
+    // Runtime method with binding
+    auto environment = new Environment<shared_ptr<InterpreterResult> >(instance->closure);
+
+    shared_ptr<InterpreterResult> instance_this(instance);
+
+    environment->define("this", instance_this);
+
+    auto bound_method = std::make_shared<InterpreterResult>();
+    bound_method->callable = true;
+    bound_method->klass = klass;
+    bound_method->function = function;
+    bound_method->kind = FUNCTION;
+    bound_method->closure = environment;
+
+    return bound_method;
 }

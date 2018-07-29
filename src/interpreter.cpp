@@ -355,6 +355,10 @@ shared_ptr<InterpreterResult> Interpreter::visit(const Set *expr) {
     return value;
 }
 
+shared_ptr<InterpreterResult> Interpreter::visit(const This *expr) {
+    return lookup_variable(expr->keyword, expr);
+}
+
 bool Interpreter::is_truthy(const InterpreterResult &expr) {
     if (expr.kind == InterpreterResult::ResultType::NIL) {
         return false;
