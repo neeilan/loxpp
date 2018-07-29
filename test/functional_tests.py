@@ -20,8 +20,8 @@ class LoxppOutputTest(unittest.TestCase):
  
     def test_fibonacci(self):
       expected = 'Interpreter output:\n8'
-      actual = run_file(absolute_path('fibonacci.lox'))
-      self.assertEqual(expected, actual)
+      output = run_file(absolute_path('fibonacci.lox'))
+      self.assertEqual(expected, output)
 
     def test_function_returns(self):
       expected = ("Interpreter output:\n"
@@ -29,34 +29,69 @@ class LoxppOutputTest(unittest.TestCase):
         "Returning nil explicitly\nnil\n"
         "Returning nil implicitly\nnil")
         
-      actual = run_file(absolute_path('fn_returns.lox'))
-      self.assertEqual(expected, actual)
+      output = run_file(absolute_path('fn_returns.lox'))
+      self.assertEqual(expected, output)
         
     def test_while_loop(self):
       expected = 'Interpreter output:\n0\n1\n2\n3\n4'
-      actual = run_file(absolute_path('simple_while_loop.lox'))
-      self.assertEqual(expected, actual)
+      output = run_file(absolute_path('simple_while_loop.lox'))
+      self.assertEqual(expected, output)
     
     def test_for_loop(self):
       expected = 'Interpreter output:\n0\n2\n4\n6\n8'
-      actual = run_file(absolute_path('for_loop.lox'))
-      self.assertEqual(expected, actual)
+      output = run_file(absolute_path('for_loop.lox'))
+      self.assertEqual(expected, output)
     
     def test_closure(self):
       expected = 'Interpreter output:\n1\n2'
-      actual = run_file(absolute_path('closure.lox'))
-      self.assertEqual(expected, actual)
+      output = run_file(absolute_path('closure.lox'))
+      self.assertEqual(expected, output)
     
     def test_this_bound_closure(self):
       expected = 'Interpreter output:\n<fn localFunction>\n<fn localFunction>'
-      actual = run_file(absolute_path('this_closure.lox'))
-      self.assertEqual(expected, actual)
+      output = run_file(absolute_path('this_closure.lox'))
+      self.assertEqual(expected, output)
  
     def test_recursive_countdown(self):
       expected = 'Interpreter output:\n3\n2\n1\n0'
-      actual = run_file(absolute_path('recursive_countdown.lox'))
-      self.assertEqual(expected, actual)
+      output = run_file(absolute_path('recursive_countdown.lox'))
+      self.assertEqual(expected, output)
+
+    def test_call_methods_during_init(self):
+      expected = 'Interpreter output:\n3\n-2'
+      output = run_file(absolute_path('call_methods_during_init.lox'))
+      self.assertEqual(expected, output)
+
+    def test_init_returns_instance(self):
+      expected = 'Interpreter output:\n<SomeClass instance>\n<SomeClass instance>'
+      output = run_file(absolute_path('init_returns_this.lox'))
+      self.assertEqual(expected, output)
  
+    def test_init_allows_early_return(self):
+      expected = 'Interpreter output:\n10\n5'
+      output = run_file(absolute_path('init_allows_early_return.lox'))
+      self.assertEqual(expected, output)
+
+
+class LoxppOutputErrorsTest(unittest.TestCase):
+ 
+    def setUp(self):
+        pass
+ 
+    def test_top_level_return(self):
+      error_snippets = ['line 5', 'Cannot return from top-level code']
+      output = run_file(absolute_path('err_top_level_return.lox'))
+      
+      for snippet in error_snippets:
+        self.assertTrue(snippet in output)
+
+    def test_return_from_init(self):
+      error_snippets = ['line 4', 'Cannot return a value from initializer.']
+      output = run_file(absolute_path('err_return_from_init.lox'))
+      
+      for snippet in error_snippets:
+        self.assertTrue(snippet in output)
+
  
 if __name__ == '__main__':
   unittest.main()

@@ -48,6 +48,11 @@ void Resolver::visit(const Assignment *expr) {
 }
 
 void Resolver::visit(const This *expr) {
+    if (current_class != ClassType::IN_CLASS) {
+        Lox::error(expr->keyword, "Cannot use 'this' outside of a class.");
+        return;
+    }
+
     resolve_local(expr, expr->keyword);
 }
 
@@ -58,6 +63,9 @@ void Resolver::visit(const FuncStmt *stmt) {
 }
 
 void Resolver::visit(const ClassStmt* stmt) {
+    ClassType enclosing_class = current_class;
+    current_class = ClassType::IN_CLASS;
+
     declare(stmt->name);
     define(stmt->name);
 
@@ -71,10 +79,19 @@ void Resolver::visit(const ClassStmt* stmt) {
 
     for (const Stmt* method : stmt->methods) {
         FunctionType declaration = METHOD;
-        resolve_fn(declaration, static_cast<const FuncStmt*>(method));
+
+        const FuncStmt* method_fn = static_cast<const FuncStmt*>(method);
+
+        if (method_fn->name.lexeme == "init") {
+            declaration = INITIALIZER;
+        }
+
+        resolve_fn(declaration, method_fn);
     }
 
     end_scope();
+
+    current_class = enclosing_class;
 }
 
 void Resolver::resolve_local(const Expr *expr, const Token name) {
@@ -95,6 +112,9 @@ void Resolver::resolve_local(const Expr *expr, const Token name) {
 }
 
 void Resolver::resolve_fn(FunctionType declaration, const FuncStmt *fn) {
+    FunctionType enclosing_function = current_function;
+    current_function = declaration;
+
     begin_scope();
 
     for (const Token& param : fn->parameters) {
@@ -104,6 +124,8 @@ void Resolver::resolve_fn(FunctionType declaration, const FuncStmt *fn) {
 
     resolve(fn->body);
     end_scope();
+
+    current_function = enclosing_function;
 }
 
 void Resolver::begin_scope() {
@@ -157,8 +179,19 @@ void Resolver::visit(const PrintStmt* stmt) {
 }
 
 void Resolver::visit(const ReturnStmt* stmt) {
-    if (stmt->value)
+
+    if (current_function == NOT_IN_FN) {
+        Lox::error(stmt->keyword, "Cannot return from top-level code.");
+    }
+
+    if (current_function == INITIALIZER && stmt->value) {
+        Lox::error(stmt->keyword, "Cannot return a value from initializer.");
+    }
+
+    if (stmt->value) {
         resolve(stmt->value);
+    }
+
 }
 
 void Resolver::visit(const WhileStmt* stmt) {

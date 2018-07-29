@@ -58,6 +58,8 @@ void Interpreter::visit(const ClassStmt *stmt) {
 
     std::map<std::string, shared_ptr<InterpreterResult>> methods;
 
+    int init_arity = 0;
+
     for (const Stmt* method : stmt->methods) {
         auto _method = static_cast<const FuncStmt*>(method);
 
@@ -66,6 +68,10 @@ void Interpreter::visit(const ClassStmt *stmt) {
         _method_impl->kind = InterpreterResult::ResultType::FUNCTION;
         _method_impl->callable = true;
         _method_impl->function = _method;
+        _method_impl->arity = _method->parameters.size();
+        _method_impl->is_initializer = _method->name.lexeme == "init";
+
+        if (_method->name.lexeme == "init") init_arity = _method->parameters.size();
 
         methods[_method->name.lexeme] = _method_impl;
     }
@@ -76,8 +82,8 @@ void Interpreter::visit(const ClassStmt *stmt) {
     klass->name = stmt->name.lexeme;
     klass->rt_methods = methods;
     klass->callable = true; // constructor
-    klass->arity = 0;
-    klass->class_def = klass.get(); // todo: dangerous?
+    klass->arity = init_arity;
+    klass->class_def = klass.get();
 
     environment->assign(stmt->name, klass);
 }
@@ -319,14 +325,15 @@ shared_ptr<InterpreterResult> Interpreter::visit(const Call *expr) {
 
     std::vector< shared_ptr<InterpreterResult> > args;
 
-    for (Expr* arg : expr->args) {
-        args.push_back(evaluate(*arg));
+
+    if (expr->args.size() != callee->get_arity()) {
+        throw RuntimeErr(expr->paren,
+                         "Expected " + std::to_string(callee->get_arity())
+                         + " arguments but got " + std::to_string(expr->args.size()) + ".");
     }
 
-    if (args.size() != callee->arity) {
-        throw RuntimeErr(expr->paren,
-                         "Expected " + std::to_string(callee->arity)
-                         + " arguments but got " + std::to_string(args.size()) + ".");
+    for (Expr* arg : expr->args) {
+        args.push_back(evaluate(*arg));
     }
 
     return callee->call(this, args);

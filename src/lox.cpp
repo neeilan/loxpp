@@ -49,14 +49,10 @@ void Lox::run(const std::string& source) {
     Scanner scanner(source);
     const std::vector<Token> tokens = scanner.scan_tokens();
 
-//    // Print the tokens for now
-//    for (const Token& token : tokens) {
-//        std::cout << token.str();
-//    }
-
     Parser parser(tokens);
     std::vector<Stmt*> statements = parser.parse();
 
+    // Stop if there was a parsing error.
     if (had_error) return;
 
     std::cout << "Interpreter output:" << std::endl;
@@ -64,6 +60,9 @@ void Lox::run(const std::string& source) {
 
     Resolver resolver(&interpreter);
     resolver.resolve(statements);
+
+    // Stop if there was a resolution error.
+    if (had_error) return;
 
     interpreter.interpret(statements);
 

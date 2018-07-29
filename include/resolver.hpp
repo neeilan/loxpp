@@ -12,11 +12,15 @@
 #include "visitable_types.hpp"
 
 enum FunctionType {
-    METHOD, FUNCTION, NONE
+    NOT_IN_FN, METHOD, FUNCTION, INITIALIZER
+};
+
+enum ClassType {
+    NOT_IN_CLASS, IN_CLASS
 };
 
 // true in map == 'is finished being initialized in this scope'
-//using scope_map = std::map<std::string, bool>
+using scope_map = std::map<std::string, bool>;
 
 class Resolver : public ExprVisitor<void>, public StmtVisitor{
 public:
@@ -25,7 +29,9 @@ public:
 
 private:
     Interpreter* interpreter;
-    std::vector<std::map<std::string, bool>*> scopes;
+    std::vector<scope_map*> scopes;
+    ClassType current_class = NOT_IN_CLASS;
+    FunctionType current_function = NOT_IN_FN;
 
     void visit(const Binary* expr);
     void visit(const StrLiteral* expr);

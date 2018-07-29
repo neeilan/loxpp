@@ -31,6 +31,8 @@ public:
     int arity;
     const FuncStmt* function;
     Environment<shared_ptr<InterpreterResult> >* closure = nullptr;
+    bool is_initializer = false;
+
 
     shared_ptr<InterpreterResult> call(
             Interpreter* interpreter,
@@ -54,6 +56,8 @@ public:
 
     // Instance method
     shared_ptr<InterpreterResult> bind(InterpreterResult* const instance);
+
+    int get_arity() const;
 };
 
 

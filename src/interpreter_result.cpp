@@ -59,6 +59,12 @@ shared_ptr<InterpreterResult> InterpreterResult::call(
         auto instance = std::make_shared<InterpreterResult>();
         instance->kind = ResultType::INSTANCE;
         instance->klass = class_def;
+
+        // Run user-defined initializer if present
+        if (rt_methods.count("init") > 0) {
+            rt_methods["init"]->bind(instance.get())->call(interpreter, args);
+        }
+
         return instance;
     }
 
@@ -70,7 +76,9 @@ shared_ptr<InterpreterResult> InterpreterResult::call(
 
     interpreter->execute(function->body, call_env);
 
-    return interpreter->return_val;
+    // initializer always returns 'this'
+    Token this_token(THIS, "this", "", 0);
+    return is_initializer ? closure->get_at(0, this_token) : interpreter->return_val;
 }
 
 shared_ptr<InterpreterResult> InterpreterResult::get(Token property)
@@ -113,10 +121,27 @@ shared_ptr<InterpreterResult> InterpreterResult::bind(InterpreterResult *const i
 
     auto bound_method = std::make_shared<InterpreterResult>();
     bound_method->callable = true;
+    bound_method->arity = get_arity();
     bound_method->klass = klass;
     bound_method->function = function;
     bound_method->kind = FUNCTION;
+    bound_method->is_initializer = is_initializer;
     bound_method->closure = environment;
 
     return bound_method;
+}
+
+
+int InterpreterResult::get_arity() const {
+    if (kind == CLASS) {
+        if (rt_methods.count("init") > 0) {
+            return rt_methods.at("init")->arity;
+        } else {
+            return 0;
+        }
+    } else if (kind == FUNCTION) {
+        return arity;
+    }
+
+    throw std::runtime_error("Checking arity of uncallable object");
 }
