@@ -14,4 +14,21 @@ add_executable(loxpp
         src/lox.cpp
         src/scanner.cpp
         src/token.cpp
-        Makefile include/visitor.h src/parser.cpp include/parser.h src/interpreter.cpp include/interpreter.h src/ast_printer.cpp include/ast_printer.hpp include/interpreter_result.hpp src/interpreter_result.cpp include/visitable_types.hpp include/environment.hpp include/return.hpp src/resolver.cpp include/resolver.hpp include/runtime_err.hpp)
+        include/visitor.h
+        src/parser.cpp
+        include/parser.h
+        src/interpreter.cpp
+        include/interpreter.h
+        src/ast_printer.cpp
+        include/ast_printer.hpp
+        include/interpreter_result.hpp
+        src/interpreter_result.cpp
+        include/visitable_types.hpp
+        include/environment.hpp
+        include/return.hpp
+        src/resolver.cpp
+        include/resolver.hpp
+        include/runtime_err.hpp
+        include/ast_deleter.hpp
+        src/ast_deleter.cpp
+        src/ast_deleter.hpp)

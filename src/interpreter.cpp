@@ -41,6 +41,8 @@ void Interpreter::execute(const std::vector<Stmt*> stmts, Environment<shared_ptr
         return;
     }
 
+    delete exec_env;
+
     environment = prev;
 }
 

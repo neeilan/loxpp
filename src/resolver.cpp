@@ -133,7 +133,7 @@ void Resolver::begin_scope() {
 }
 
 void Resolver::end_scope() {
-    //delete scopes.back();
+    delete scopes.back();
     scopes.pop_back();
 }
 

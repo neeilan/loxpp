@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <resolver.hpp>
+#include <ast_deleter.hpp>
 
 
 bool Lox::had_error = false;
@@ -65,6 +66,9 @@ void Lox::run(const std::string& source) {
     if (had_error) return;
 
     interpreter.interpret(statements);
+
+    AstDeleter deleter;
+    deleter.recursive_delete(statements);
 
 }
 
