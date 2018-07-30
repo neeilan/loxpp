@@ -72,6 +72,11 @@ class LoxppOutputTest(unittest.TestCase):
       output = run_file(absolute_path('init_allows_early_return.lox'))
       self.assertEqual(expected, output)
 
+    def test_superclass_method_call_on_instance(self):
+      expected = 'Interpreter output:\nFry until golden brown.'
+      output = run_file(absolute_path('superclass_method.lox'))
+      self.assertEqual(expected, output)
+
 
 class LoxppOutputErrorsTest(unittest.TestCase):
  

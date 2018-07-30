@@ -52,6 +52,17 @@ void Interpreter::visit(const VarStmt *stmt) {
 }
 
 void Interpreter::visit(const ClassStmt *stmt) {
+    auto superclass = shared_ptr<InterpreterResult>();
+
+    if (stmt->superclass) {
+        superclass = evaluate(*stmt->superclass);
+        if (!superclass->kind == CLASS) {
+            throw RuntimeErr(stmt->superclass->name,
+                                   "Superclass must be a class.");
+        }
+    }
+
+
     shared_ptr<InterpreterResult> sentinel = std::make_shared<InterpreterResult>();
     sentinel->kind = InterpreterResult::ResultType::NIL;
 
@@ -80,6 +91,7 @@ void Interpreter::visit(const ClassStmt *stmt) {
 
     auto klass = std::make_shared<InterpreterResult>();
 
+    klass->superclass = superclass;
     klass->kind = InterpreterResult::ResultType::CLASS;
     klass->name = stmt->name.lexeme;
     klass->rt_methods = methods;

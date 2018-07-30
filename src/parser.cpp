@@ -44,6 +44,14 @@ Stmt* Parser::var_declaration() {
 
 Stmt* Parser::class_declaration() {
     Token name = consume(IDENTIFIER, "Expect class name.");
+
+    Variable* superclass = nullptr;
+
+    if (match({LESS})) {
+        consume(IDENTIFIER, "Expect superclass name.");
+        superclass = new Variable(previous());
+    }
+
     consume(LEFT_BRACE, "Expect '{' before class body.");
 
     std::vector<Stmt*> methods;
@@ -54,7 +62,7 @@ Stmt* Parser::class_declaration() {
 
     consume(RIGHT_BRACE, "Expect '}' after class body.");
 
-    return new ClassStmt(name, methods);
+    return new ClassStmt(name, superclass, methods);
 }
 
 Stmt* Parser::statement() {

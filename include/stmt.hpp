@@ -131,8 +131,9 @@ public:
 
 class ClassStmt : public Stmt {
 public:
-    explicit ClassStmt(Token name, std::vector<Stmt*> methods)
+    explicit ClassStmt(Token name, Variable* superclass, std::vector<Stmt*> methods)
             : name(name),
+              superclass(superclass),
               methods(methods) {}
 
     virtual void accept(StmtVisitor *visitor) const {
@@ -140,6 +141,7 @@ public:
     }
 
     const Token name;
+    Variable* superclass = nullptr;
     const std::vector<Stmt*> methods;
 };
 

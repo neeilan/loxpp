@@ -46,6 +46,7 @@ public:
     // Class (runtime)
     std::map<std::string, shared_ptr<InterpreterResult>> rt_methods;
     std::map<std::string, shared_ptr<InterpreterResult>> fields;
+    shared_ptr<InterpreterResult> superclass;
 
     shared_ptr<InterpreterResult> get(Token property);
     shared_ptr<InterpreterResult> find_method(InterpreterResult* const instance, std::string name);

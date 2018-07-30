@@ -106,6 +106,10 @@ shared_ptr<InterpreterResult> InterpreterResult::find_method(InterpreterResult *
         return rt_methods[name]->bind(instance);
     }
 
+    if (superclass) {
+        return superclass->find_method(instance, name);
+    }
+
     auto nil = std::make_shared<InterpreterResult>();
     nil->kind = NIL;
     return nil;

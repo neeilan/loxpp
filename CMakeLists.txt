@@ -30,5 +30,4 @@ add_executable(loxpp
         include/resolver.hpp
         include/runtime_err.hpp
         include/ast_deleter.hpp
-        src/ast_deleter.cpp
-        src/ast_deleter.hpp)
+        src/ast_deleter.cpp)
