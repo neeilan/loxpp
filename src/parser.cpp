@@ -403,7 +403,38 @@ Expr* Parser::finish_call(Expr* callee) {
     return new Call(*callee, paren, args);
 }
 
+Expr* Parser::lambda_expr() {
+    /*
+     *  Lambda syntax:
+     *  lambda (args) { return expr; }
+     *  ex : list_to_double.map(lambda (x) { return x * 2; })
+     * */
+
+    consume(LEFT_PAREN, "Expect '(' after lambda keyword");
+
+    std::vector<Token> parameters;
+    if (!check(RIGHT_PAREN)) {
+        do {
+            if (parameters.size() >= 8) {
+                error(peek(), "Cannot have more than 8 parameters.");
+            }
+
+            parameters.push_back(consume(IDENTIFIER, "Expect parameter name."));
+        } while (match({COMMA}));
+    }
+
+    consume(RIGHT_PAREN, "Expect ')' after parameters.");
+
+    consume(LEFT_BRACE, "Expect '{' before lambda body.");
+
+    std::vector<Stmt*> body;
+    body.push_back(block_statement());
+
+    return new Lambda(parameters, body);
+}
+
 Expr* Parser::primary() {
+    if (match({LAMBDA}))        return lambda_expr();
     if (match({THIS}))          return new This(previous());
     if (match({FALSE}))         return new BoolLiteral(false);
     if (match({TRUE}))          return new BoolLiteral(true);

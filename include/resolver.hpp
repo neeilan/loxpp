@@ -12,7 +12,7 @@
 #include "visitable_types.hpp"
 
 enum FunctionType {
-    NOT_IN_FN, METHOD, FUNCTION, INITIALIZER
+    NOT_IN_FN, METHOD, FUNCTION, INITIALIZER, LAMBDA_FN
 };
 
 enum ClassType {
@@ -46,6 +46,7 @@ private:
     void visit(const Get* expr);
     void visit(const Set* expr);
     void visit(const This* expr);
+    void visit(const Lambda* expr);
 
     void visit(const BlockStmt*);
     void visit(const ExprStmt*);

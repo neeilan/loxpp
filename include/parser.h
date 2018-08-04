@@ -45,6 +45,7 @@ private:
     Expr* call();
     Expr *finish_call(Expr *caller);
     Expr* primary();
+    Expr* lambda_expr();
 
     Stmt* declaration();
     Stmt* var_declaration();

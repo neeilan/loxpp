@@ -20,6 +20,7 @@ public:
     std::string visit(const BoolLiteral* expr);
     std::string visit(const Variable* expr);
     std::string visit(const Logical* expr);
+    std::string visit(const Lambda* expr);
 
 private:
     std::string parenthesize(std::string, const Expr*); // todo: change these to variadic template

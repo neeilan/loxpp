@@ -38,6 +38,7 @@ public:
     virtual T visit(const Get*) = 0;
     virtual T visit(const Set*) = 0;
     virtual T visit(const This*) = 0;
+    virtual T visit(const Lambda*) = 0;
 };
 
 #endif //LOXPP_VISITOR_H

@@ -38,6 +38,7 @@ protected:
     shared_ptr<InterpreterResult> visit(const Get* expr);
     shared_ptr<InterpreterResult> visit(const Set* expr);
     shared_ptr<InterpreterResult> visit(const This* expr);
+    shared_ptr<InterpreterResult> visit(const Lambda* expr);
 
     void visit(const BlockStmt*);
     void visit(const ExprStmt*);

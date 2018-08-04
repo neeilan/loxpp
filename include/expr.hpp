@@ -313,5 +313,27 @@ public:
     const Expr& value;
 };
 
+class Lambda : public Expr {
+public:
+    explicit Lambda(std::vector<Token> parameters, std::vector<Stmt*> body)
+            : parameters(parameters),
+              body(body) {}
+
+    virtual void accept(ExprVisitor<void>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual std::string accept(ExprVisitor<std::string>* visitor) const {
+        return visitor->visit(this);
+    }
+
+    virtual shared_ptr<InterpreterResult> accept(ExprVisitor<shared_ptr<InterpreterResult> >* visitor) const {
+        return visitor->visit(this);
+    }
+
+    const std::vector<Token> parameters;
+    const std::vector<Stmt*> body;
+};
+
 #endif
 

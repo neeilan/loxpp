@@ -46,6 +46,10 @@ std::string AstPrinter::visit(const Logical *expr) {
     return parenthesize(expr->op.lexeme, &expr->left, &expr->right);
 }
 
+std::string AstPrinter::visit(const Lambda *expr) {
+    return "<anonymous lambda>";
+}
+
 std::string AstPrinter::parenthesize(std::string name, const Expr* expr) {
     return "(" + name + " " + expr->accept(this) + ")";
 }

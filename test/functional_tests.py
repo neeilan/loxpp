@@ -82,6 +82,11 @@ class LoxppOutputTest(unittest.TestCase):
       output = run_file(absolute_path('multiline_comments.lox'))
       self.assertEqual(expected, output)
 
+    def test_simple_lambdas(self):
+        expected = 'Interpreter output:\n2\n4\n6\n6\n-1\n-2\n-3\n2\n4\n6\n-3\n-6\n-9\n1\n2\n3'
+        output = run_file(absolute_path('simple_lambdas.lox'))
+        self.assertEqual(expected, output)
+
 
 class LoxppOutputErrorsTest(unittest.TestCase):
  

@@ -366,7 +366,7 @@ shared_ptr<InterpreterResult> Interpreter::visit(const Get *expr) {
 shared_ptr<InterpreterResult> Interpreter::visit(const Set *expr) {
     shared_ptr<InterpreterResult> object = evaluate(expr->callee);
 
-    if (!(object->kind == InterpreterResult::ResultType::INSTANCE)) {
+    if (object->kind != InterpreterResult::ResultType::INSTANCE) {
         throw RuntimeErr(expr->name, "Only instances have fields.");
     }
 
@@ -378,6 +378,16 @@ shared_ptr<InterpreterResult> Interpreter::visit(const Set *expr) {
 
 shared_ptr<InterpreterResult> Interpreter::visit(const This *expr) {
     return lookup_variable(expr->keyword, expr);
+}
+
+shared_ptr<InterpreterResult> Interpreter::visit(const Lambda *expr) {
+    shared_ptr<InterpreterResult> result = std::make_shared<InterpreterResult>();
+    result->function = new FuncStmt(Token(LAMBDA, "lambda", "", 0), expr->parameters, expr->body);
+    result->kind = InterpreterResult::ResultType::FUNCTION;
+    result->arity = expr->parameters.size();
+    result->closure = environment;
+    result->callable = true;
+    return result;
 }
 
 bool Interpreter::is_truthy(const InterpreterResult &expr) {

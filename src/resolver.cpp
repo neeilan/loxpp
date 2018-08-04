@@ -132,6 +132,16 @@ void Resolver::resolve_fn(FunctionType declaration, const FuncStmt *fn) {
     current_function = enclosing_function;
 }
 
+void Resolver::visit(const Lambda *expr) {
+    auto fn = new FuncStmt(
+            Token(LAMBDA, "lambda", "", 0),
+            expr->parameters,
+            expr->body);
+
+    resolve_fn(FUNCTION, fn);
+    delete fn;
+}
+
 void Resolver::begin_scope() {
     scopes.push_back(new std::map<std::string, bool>());
 }

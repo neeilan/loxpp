@@ -7,22 +7,23 @@
 #include <vector>
 
 const std::map<std::string, TokenType> Scanner::keywords = {
-  { "and",   AND },
-  { "class", CLASS },
-  { "else",  ELSE },
-  { "false", FALSE },
-  { "for",   FOR },
-  { "fun",   FUN },
-  { "if",    IF },
-  { "nil",   NIL },
-  { "or",    OR },
-  { "print", PRINT },
-  { "return",RETURN },
-  { "super", SUPER },
-  { "this",  THIS },
-  { "true",  TRUE },
-  { "var",   VAR },
-  { "while", WHILE }
+  { "and",    AND },
+  { "class",  CLASS },
+  { "else",   ELSE },
+  { "false",  FALSE },
+  { "for",    FOR },
+  { "fun",    FUN },
+  { "lambda", LAMBDA },
+  { "if",     IF },
+  { "nil",    NIL },
+  { "or",     OR },
+  { "print",  PRINT },
+  { "return", RETURN },
+  { "super",  SUPER },
+  { "this",   THIS },
+  { "true",   TRUE },
+  { "var",    VAR },
+  { "while",  WHILE }
 };
 
 
@@ -68,7 +69,10 @@ void Scanner::scan_token() {
       } else if (match('*')) {  // A /* multi-line comment
           bool in_comment = true;
           while (in_comment && !is_at_end()) {
-              while (!match('*') && !is_at_end()) advance();
+              while (!match('*') && !is_at_end()) {
+                  if (peek() == '\n') line++;
+                  advance();
+              }
               // Matched a * - comment ends if we match a /
               in_comment = !match('/');
           }

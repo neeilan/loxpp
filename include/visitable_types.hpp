@@ -15,6 +15,7 @@ class Call;
 class Get;
 class Set;
 class This;
+class Lambda;
 
 class Stmt;
 class ExprStmt;

@@ -140,3 +140,10 @@ void AstDeleter::visit(const Set *expr) {
 void AstDeleter::visit(const This *expr) {
     exprs_to_delete.insert(static_cast<const Expr*>(expr));
 }
+
+void AstDeleter::visit(const Lambda *expr) {
+    for (Stmt* stmt : expr->body) {
+        stmt->accept(this);
+    }
+    exprs_to_delete.insert(static_cast<const Expr*>(expr));
+}
