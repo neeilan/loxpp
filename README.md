@@ -1,5 +1,29 @@
 # loxpp
-A C++ port of [jlox](https://github.com/munificent/craftinginterpreters/tree/master/java/com/craftinginterpreters), a reference tree-walk interpreter for [Bob Nystrom](http://github.com/munificent/)'s Lox programming language.
+C++ port of [jlox](https://github.com/munificent/craftinginterpreters/tree/master/java/com/craftinginterpreters), a reference tree-walk interpreter for [Bob Nystrom](http://github.com/munificent/)'s Lox programming language.
+
+## Features
+loxpp is designed to be interface-compliant with jlox. In addition to standard Lox [syntax and semantics](https://github.com/munificent/craftinginterpreters/tree/master/test/), loxpp supports additional features such as:
+### Lambda expressions <sup>[commit](https://github.com/neeilan/loxpp/commit/0850ed63127297f3cff3532df2be1afc23ccb6d2)</sup>
+loxpp adds support for anonymous/lambda functions, using the following syntax:
+```
+lambda (args...) { body }
+```
+See examples of lambda usage [here](https://github.com/neeilan/loxpp/blob/master/test/simple_lambdas.lox).
+
+### Multi-line comments <sup>[commit](https://github.com/neeilan/loxpp/commit/621301fad503525c9c362d7a4fa6927004384181)</sup>
+C++ (Clang) style non-nested multi-line comments are supported:
+```
+/* Multi
+ * line
+ * comment 1 */
+
+var x = "Multiline comments!";
+
+/* Il$$3g^l
+   charac%ers '\ */
+
+print x;
+```
 
 ## Build
 
@@ -24,7 +48,4 @@ Using CMake:
 ./bin/loxpp <file>   # run file
 ```
 
-loxpp is mostly interface-compliant with jlox.
-The biggest difference is when it comes to memory management - jlox relies on the JVM for memory management, but I haven't gotten around to implementing a garbage collector for loxpp.
-
-Other than that, some error messages are different, and no native functions are implemented yet.
+The biggest divergence from jlox is when it comes to memory management - jlox relies on the JVM for loose object cleanup, but I haven't gotten around to implementing a garbage collector for loxpp. Other than that, error messages are slightly different, and the native `clock` function is not yet implemented.
