@@ -65,6 +65,13 @@ void Scanner::scan_token() {
     case '/':
       if (match('/')) {  // A '//' single-line comment
         while (peek() != '\n' && !is_at_end()) advance();
+      } else if (match('*')) {  // A /* multi-line comment
+          bool in_comment = true;
+          while (in_comment && !is_at_end()) {
+              while (!match('*') && !is_at_end()) advance();
+              // Matched a * - comment ends if we match a /
+              in_comment = !match('/');
+          }
       } else {
         add_token(SLASH);
       }

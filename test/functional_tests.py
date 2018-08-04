@@ -77,6 +77,11 @@ class LoxppOutputTest(unittest.TestCase):
       output = run_file(absolute_path('superclass_method.lox'))
       self.assertEqual(expected, output)
 
+    def test_multiline_comments(self):
+      expected = 'Interpreter output:\nMultiline comments!'
+      output = run_file(absolute_path('multiline_comments.lox'))
+      self.assertEqual(expected, output)
+
 
 class LoxppOutputErrorsTest(unittest.TestCase):
  
