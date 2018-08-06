@@ -14,6 +14,7 @@
 class Stmt {
 public:
     virtual void accept(StmtVisitor *visitor) const = 0;
+    virtual ~Stmt() = default;
 };
 
 class ExprStmt : public Stmt {

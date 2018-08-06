@@ -85,8 +85,8 @@ public:
         return visitor->visit(this);
     }
 
-    bool nil;
     std::string value;
+    bool nil;
 };
 
 class NumLiteral : public Expr {
@@ -108,8 +108,8 @@ public:
         return visitor->visit(this);
     }
 
-    bool nil;
     double value;
+    bool nil;
 };
 
 class BoolLiteral : public Expr {

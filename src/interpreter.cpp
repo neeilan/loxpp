@@ -56,7 +56,7 @@ void Interpreter::visit(const ClassStmt *stmt) {
 
     if (stmt->superclass) {
         superclass = evaluate(*stmt->superclass);
-        if (!superclass->kind == CLASS) {
+        if (superclass->kind != InterpreterResult::ResultType::CLASS) {
             throw RuntimeErr(stmt->superclass->name,
                                    "Superclass must be a class.");
         }
