@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "token.hpp"
-//#include "expr.hpp"
+#include "expr.hpp"
 #include "stmt.hpp"
 
 class ParseErr : std::runtime_error {
