@@ -7,13 +7,14 @@
 #include <map>
 #include <vector>
 
-class Scanner {
-public:
-    Scanner(const std::string& source);
+class Scanner
+{
+  public:
+    Scanner(const std::string &source);
 
     std::vector<Token> scan_tokens();
 
-private:
+  private:
     const std::string source;
     std::vector<Token> tokens;
     static const std::map<std::string, TokenType> keywords;
@@ -52,4 +53,3 @@ private:
 };
 
 #endif
-

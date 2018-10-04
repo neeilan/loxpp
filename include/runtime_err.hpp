@@ -5,8 +5,9 @@
 
 #include "token.hpp"
 
-class RuntimeErr : public std::runtime_error {
-public:
+class RuntimeErr : public std::runtime_error
+{
+  public:
     RuntimeErr(Token token, const std::string msg) : std::runtime_error(msg), token(token) {}
 
     Token token;

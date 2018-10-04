@@ -3,8 +3,9 @@
 
 #include <stdexcept>
 
-class Return : public std::runtime_error {
-public:
+class Return : public std::runtime_error
+{
+  public:
     Return() : runtime_error("Return sentinel") {}
 };
 

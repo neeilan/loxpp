@@ -9,15 +9,16 @@
 #include "runtime_err.hpp"
 
 template <class T>
-class Environment {
-public:
+class Environment
+{
+  public:
     explicit Environment()
-            : enclosing(nullptr) {};
+        : enclosing(nullptr){};
 
-    explicit Environment(Environment<T>* enclosing)
-            : enclosing(enclosing) {}
+    explicit Environment(Environment<T> *enclosing)
+        : enclosing(enclosing) {}
 
-    explicit Environment(const Environment& env)
+    explicit Environment(const Environment &env)
     {
         this->enclosing = env.enclosing;
         this->values = env.values;
@@ -30,12 +31,14 @@ public:
 
     void assign(const Token name, const T value)
     {
-        if (values.count(name.lexeme) > 0) {
+        if (values.count(name.lexeme) > 0)
+        {
             values[name.lexeme] = value;
             return;
         }
 
-        if (enclosing) {
+        if (enclosing)
+        {
             enclosing->assign(name, value);
             return;
         }
@@ -45,11 +48,13 @@ public:
 
     T get(const Token name)
     {
-        if (values.count(name.lexeme) > 0) {
+        if (values.count(name.lexeme) > 0)
+        {
             return values[name.lexeme];
         }
 
-        if (enclosing) {
+        if (enclosing)
+        {
             return enclosing->get(name);
         }
 
@@ -66,15 +71,16 @@ public:
         ancestor(distance)->values.at(name.lexeme) = value;
     }
 
-private:
-    Environment<T>* enclosing = nullptr;
+  private:
+    Environment<T> *enclosing = nullptr;
     std::map<std::string, T> values;
 
-    Environment* ancestor(int distance)
+    Environment *ancestor(int distance)
     {
-        Environment<T>* curr_environment = this;
+        Environment<T> *curr_environment = this;
 
-        for (int i = 0; i < distance; i++) {
+        for (int i = 0; i < distance; i++)
+        {
             curr_environment = curr_environment->enclosing;
         }
 
