@@ -4,7 +4,7 @@
 #include <string>
 
 #include "expr.hpp"
-#include "visitor.h"
+#include "visitor.hpp"
 
 class AstPrinter : public ExprVisitor<std::string> {
 public:

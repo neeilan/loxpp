@@ -1,20 +1,20 @@
-#include "expr.hpp"
-#include "interpreter.h"
-#include "lox.hpp"
-#include "parser.h"
-#include "stmt.hpp"
-#include "scanner.hpp"
-#include "token.hpp"
-#include "runtime_err.hpp"
-
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <resolver.hpp>
-#include <ast_deleter.hpp>
+
+#include "resolver.hpp"
+#include "ast_deleter.hpp"
+#include "expr.hpp"
+#include "interpreter.hpp"
+#include "lox.hpp"
+#include "parser.hpp"
+#include "stmt.hpp"
+#include "scanner.hpp"
+#include "token.hpp"
+#include "runtime_err.hpp"
 
 
 bool Lox::had_error = false;

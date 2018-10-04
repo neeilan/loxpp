@@ -1,10 +1,10 @@
 #ifndef LOXPP_SRC_EXPR_H_
 #define LOXPP_SRC_EXPR_H_
 
-#include "interpreter.h"
+#include "interpreter.hpp"
 #include "interpreter_result.hpp"
 #include "token.hpp"
-#include "visitor.h"
+#include "visitor.hpp"
 
 #include <memory>
 #include <string>

@@ -5,10 +5,10 @@
 #include <map>
 #include <vector>
 
-#include "interpreter.h"
+#include "interpreter.hpp"
 #include "interpreter_result.hpp"
 #include "token.hpp"
-#include "visitor.h"
+#include "visitor.hpp"
 #include "visitable_types.hpp"
 
 enum FunctionType {

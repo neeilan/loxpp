@@ -1,10 +1,10 @@
-#include "parser.h"
+#include <memory>
+#include <vector>
+
+#include "parser.hpp"
 #include "lox.hpp"
 #include "token.hpp"
 #include "stmt.hpp"
-
-#include <memory>
-#include <vector>
 
 std::vector<Stmt*> Parser::parse() {
     std::vector<Stmt*> statements;

@@ -5,7 +5,7 @@
 #include <string>
 
 #include "visitable_types.hpp"
-#include "interpreter.h"
+#include "interpreter.hpp"
 #include "environment.hpp"
 
 

@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "return.hpp"
-#include "interpreter.h"
+#include "interpreter.hpp"
 #include "interpreter_result.hpp"
 #include "runtime_err.hpp"
 #include "expr.hpp"

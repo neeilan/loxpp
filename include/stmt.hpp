@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "interpreter.h"
+#include "interpreter.hpp"
 #include "interpreter_result.hpp"
 #include "token.hpp"
 #include "expr.hpp"
-#include "visitor.h"
+#include "visitor.hpp"
 
 
 class Stmt {

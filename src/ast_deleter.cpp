@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "ast_deleter.hpp"
-#include "interpreter.h"
+#include "interpreter.hpp"
 
 
 void AstDeleter::recursive_delete(const std::vector<Stmt*>& statements) {

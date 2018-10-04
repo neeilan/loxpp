@@ -10,7 +10,7 @@
 #include "token.hpp"
 #include "expr.hpp"
 #include "interpreter_result.hpp"
-#include "visitor.h"
+#include "visitor.hpp"
 #include "stmt.hpp"
 #include "environment.hpp"
 

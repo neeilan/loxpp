@@ -14,11 +14,11 @@ add_executable(loxpp
         src/lox.cpp
         src/scanner.cpp
         src/token.cpp
-        include/visitor.h
+        include/visitor.hpp
         src/parser.cpp
-        include/parser.h
+        include/parser.hpp
         src/interpreter.cpp
-        include/interpreter.h
+        include/interpreter.hpp
         src/ast_printer.cpp
         include/ast_printer.hpp
         include/interpreter_result.hpp

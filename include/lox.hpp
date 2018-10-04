@@ -4,7 +4,7 @@
 #include <string>
 
 #include "token.hpp"
-#include "interpreter.h"
+#include "interpreter.hpp"
 #include "runtime_err.hpp"
 
 class Lox {

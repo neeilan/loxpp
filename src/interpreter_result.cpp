@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "interpreter.h"
+#include "interpreter.hpp"
 
 using std::shared_ptr;
 

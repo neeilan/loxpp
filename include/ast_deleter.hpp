@@ -4,7 +4,7 @@
 #include <set>
 
 #include "expr.hpp"
-#include "visitor.h"
+#include "visitor.hpp"
 #include "stmt.hpp"
 
 class AstDeleter : public ExprVisitor<void>,
