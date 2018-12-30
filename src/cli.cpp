@@ -1,10 +1,10 @@
-#include "lox.hpp"
-
 #include <iostream>
 
+#include "lox.hpp"
 #include "ast_printer.hpp"
 #include "token.hpp"
 #include "expr.hpp"
+
 
 int main(int argc, char **argv)
 {
